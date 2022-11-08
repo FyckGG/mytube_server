@@ -4,7 +4,7 @@ const fileMiddleWare = require("../middleware/uploadProfileImg");
 const router = new Router();
 
 router.post("/create-dir", UserDataCreationController.createDir);
-router.post("/create-dir-avatar", UserDataCreationController.createAvatarDir);
+router.post("/create-dir-avatar", UserDataCreationController.createUsersDir);
 router.post("/add-defaut-avatar", UserDataCreationController.addDefaultImg);
 router.post(
   "/upload-avatar",

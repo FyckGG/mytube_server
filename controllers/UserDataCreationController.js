@@ -14,10 +14,10 @@ class UserDataCreationController {
     }
   }
 
-  async createAvatarDir(req, res, next) {
+  async createUsersDir(req, res, next) {
     try {
       const { id } = req.body;
-      const result = await UserDataCreationService.createAvatarDir(id);
+      const result = await UserDataCreationService.createUsersDir(id);
 
       return res.json(result);
     } catch (e) {

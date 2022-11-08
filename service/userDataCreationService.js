@@ -12,12 +12,20 @@ class UserDataCreationService {
     return "Директория успешно создана.";
   }
 
-  async createAvatarDir(id) {
+  async createUsersDir(id) {
     fs.mkdir(
       path.join(__dirname + "/../usersData/" + id + "/avatar"),
       (err) => {
         if (err) {
           throw new Error("Не удалось создать папку для аватара.");
+        }
+      }
+    );
+    fs.mkdir(
+      path.join(__dirname + "/../usersData/" + id + "/videos"),
+      (err) => {
+        if (err) {
+          throw new Error("Не удалось создать папку для видео.");
         }
       }
     );
