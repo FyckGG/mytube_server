@@ -2,9 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-// const bcrypt = require("bcryptjs");
-// const User = require("./User.js");
-// const UserController = require("./UserController.js");
+const user_action_router = require("./router/UserActionRouter");
 const router = require("./router/UserRouter");
 const data_creation_router = require("./router/UserDataCreationRouter");
 const data_load_router = require("./router/UserDataLoadRouter");
@@ -13,15 +11,13 @@ const path = require("path");
 
 const PORT = process.env.PORT || 5000;
 
-// const url =
-//   "mongodb+srv://admin:admin@cluster0.xzvhezj.mongodb.net/?retryWrites=true&w=majority";
 const url = process.env.DB_URL;
 
 const app = express();
 
 const corsOptions = {
   origin: "http://localhost:3000",
-  credentials: true, //access-control-allow-credentials:true
+  credentials: true,
   optionSuccessStatus: 200,
 };
 
@@ -39,6 +35,7 @@ app.use(
 app.use("/users", router);
 app.use("/users-data-load", data_load_router);
 app.use("/users-data-creation", data_creation_router);
+app.use("/user-action", user_action_router);
 
 const start = async () => {
   try {
