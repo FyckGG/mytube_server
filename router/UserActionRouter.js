@@ -4,10 +4,6 @@ const UserActionController = require("./../controllers/UserActionController");
 
 const router = new Router();
 
-router.post(
-  "/add-video",
-  fileMiddleWare.single("video"),
-  UserActionController.addNewVideo
-);
+router.post("/add-video", UserActionController.addNewVideo);
 
 module.exports = router;
