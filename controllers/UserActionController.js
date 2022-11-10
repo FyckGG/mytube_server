@@ -17,6 +17,20 @@ class UserActionController {
       res.status(400).send({ error: e });
     }
   }
+
+  async upload_video(req, res, next) {
+    try {
+      if (req.file) {
+        // console.log(req.file);
+        // console.log(req.body);
+        res.json({ video_name: req.file.filename });
+      } else {
+        throw new Error("Название видео не получено.");
+      }
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();
