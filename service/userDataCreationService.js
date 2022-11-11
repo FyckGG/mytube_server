@@ -29,6 +29,14 @@ class UserDataCreationService {
         }
       }
     );
+    fs.mkdir(
+      path.join(__dirname + "/../usersData/" + id + "/videos_thumbnails"),
+      (err) => {
+        if (err) {
+          throw new Error("Не удалось создать папку для миниатюр видео.");
+        }
+      }
+    );
     return { avatar_path: "/usersData/" + id + "/avatar/" };
   }
 
