@@ -47,8 +47,9 @@ class UserActionController {
   // }
   async create_video_thumbnail(req, res, next) {
     try {
-      const { video_dir, thumbnail_dir, thumbnail_name } = req.body;
+      const { videoId, video_dir, thumbnail_dir, thumbnail_name } = req.body;
       const result = await UserActionsService.createVideoThubnail(
+        videoId,
         video_dir,
         thumbnail_dir,
         thumbnail_name

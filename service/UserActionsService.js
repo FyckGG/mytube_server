@@ -1,12 +1,11 @@
 const Video = require("./../models/Video");
+const VideoThumbnail = require("./../models/VideoThumbnail");
 const thumbsupply = require("thumbsupply");
-//const ffmpeg_g = require("ffmpeg-static");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
-//const { ffprobe } = require("fluent-ffmpeg");
+
 ffmpeg.setFfmpegPath(ffmpegPath);
-//ffprobe.setFfprobePath(ffprobePath);
 
 class UserActionService {
   async addNewVideo(userId, name, path, description, is_public, subject) {
@@ -25,23 +24,7 @@ class UserActionService {
     }
   }
 
-  // async createVideoThubnail(video_dir, thumbsupply_dir) {
-  //   try {
-  //     console.log(__dirname + "/super.mp4");
-  //     await thumbsupply.generateThumbnail("./super.mp4", {
-  //       size: thumbsupply.ThumbSize.MEDIUM, // or ThumbSize.LARGE
-  //       timestamp: "10%", // or `30` for 30 seconds
-  //       forceCreate: true,
-  //       //cacheDir: thumbsupply_dir,
-  //       cacheDir: "./../usersData",
-  //       mimetype: "video/mp4",
-  //     });
-  //     return "succes";
-  //   } catch (e) {
-  //     return "Ошибка при создании миниатюры видео: " + e;
-  //   }
-  // }
-  async createVideoThubnail(video_dir, thumbnail_dir, thumbnail_name) {
+  async createVideoThubnail(videoId, video_dir, thumbnail_dir, thumbnail_name) {
     try {
       const thubnail = new ffmpeg(__dirname + video_dir)
         .on("filenames", function (filenames) {
@@ -62,7 +45,12 @@ class UserActionService {
             console.log("screenshots were saved");
           }
         );
-      return "Миниатюра была создана.";
+      const thumbnail = await VideoThumbnail.create({
+        video: videoId,
+        thumbnail_name: `${thumbnail_name}.png`,
+        thumbnail_directory: thumbnail_dir,
+      });
+      return resizeBy.json(thubnail);
     } catch (e) {
       return "Ошибка при создании миниатюры видео: " + e;
     }
