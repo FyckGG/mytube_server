@@ -1,3 +1,4 @@
+const UserActionsService = require("./../service/UserActionsService");
 const UserActionService = require("./../service/UserActionsService");
 
 class UserActionController {
@@ -27,6 +28,32 @@ class UserActionController {
       } else {
         throw new Error("Название видео не получено.");
       }
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
+
+  // async create_video_thumbnail(req, res, next) {
+  //   try {
+  //     const { video_dir, thumbsupply_dir } = req.body;
+  //     const result = await UserActionService.createVideoThubnail(
+  //       video_dir,
+  //       thumbsupply_dir
+  //     );
+  //     res.json(result);
+  //   } catch (e) {
+  //     res.status(400).send({ error: e.message });
+  //   }
+  // }
+  async create_video_thumbnail(req, res, next) {
+    try {
+      const { video_dir, thumbnail_dir, thumbnail_name } = req.body;
+      const result = await UserActionsService.createVideoThubnail(
+        video_dir,
+        thumbnail_dir,
+        thumbnail_name
+      );
+      res.json(result);
     } catch (e) {
       res.status(400).send({ error: e.message });
     }
