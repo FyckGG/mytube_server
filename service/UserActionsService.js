@@ -57,7 +57,7 @@ class UserActionService {
       const thumbnail = await VideoThumbnail.create({
         video: videoId,
         thumbnail_name: `${thumbnail_name}.png`,
-        thumbnail_directory: thumbnail_dir,
+        thumbnail_directory: thumbnail_dir.substring(3),
       });
       return resizeBy.json(thubnail);
     } catch (e) {
