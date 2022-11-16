@@ -7,6 +7,7 @@ const Video = new Schema({
   video_description: { type: String },
   is_public: { type: Boolean, default: true },
   video_subject: { type: String, required: true },
+  video_duration: { type: Number, required: true },
   upload_date: { type: Date, default: Date.now },
 });
 

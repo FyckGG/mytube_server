@@ -8,7 +8,15 @@ const ffmpeg = require("fluent-ffmpeg");
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 class UserActionService {
-  async addNewVideo(userId, name, path, description, is_public, subject) {
+  async addNewVideo(
+    userId,
+    name,
+    path,
+    description,
+    is_public,
+    subject,
+    duration
+  ) {
     try {
       const video = await Video.create({
         user: userId,
@@ -17,6 +25,7 @@ class UserActionService {
         video_description: description,
         is_public: is_public,
         video_subject: subject,
+        video_duration: duration,
       });
       return video;
     } catch (e) {
