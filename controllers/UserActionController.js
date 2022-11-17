@@ -35,18 +35,6 @@ class UserActionController {
     }
   }
 
-  // async create_video_thumbnail(req, res, next) {
-  //   try {
-  //     const { video_dir, thumbsupply_dir } = req.body;
-  //     const result = await UserActionService.createVideoThubnail(
-  //       video_dir,
-  //       thumbsupply_dir
-  //     );
-  //     res.json(result);
-  //   } catch (e) {
-  //     res.status(400).send({ error: e.message });
-  //   }
-  // }
   async create_video_thumbnail(req, res, next) {
     try {
       const { videoId, video_dir, thumbnail_dir, thumbnail_name } = req.body;
@@ -56,6 +44,15 @@ class UserActionController {
         thumbnail_dir,
         thumbnail_name
       );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
+  async load_video_for_watch(req, res, next) {
+    try {
+      const { video_id } = req.body;
+      const result = await UserActionService.loadVideoForWatch(video_id);
       res.json(result);
     } catch (e) {
       res.status(400).send({ error: e.message });

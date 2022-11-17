@@ -64,6 +64,15 @@ class UserActionService {
       return "Ошибка при создании миниатюры видео: " + e;
     }
   }
+
+  async loadVideoForWatch(video_id) {
+    try {
+      const video = await Video.findOne({ _id: video_id });
+      return video;
+    } catch (e) {
+      return "Ошибка при загруке видео: " + e;
+    }
+  }
 }
 
 module.exports = new UserActionService();

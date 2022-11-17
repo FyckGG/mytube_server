@@ -10,12 +10,9 @@ router.post(
   fileMiddleWare.single("video"),
   UserActionController.upload_video
 );
-// router.post(
-//   "/create-video-thumbnail",
-//   UserActionController.create_video_thumbnail
-// );
 router.post(
   "/create-video-thumbnail",
   UserActionController.create_video_thumbnail
 );
+router.post("/load-watch-video", UserActionController.load_video_for_watch);
 module.exports = router;
