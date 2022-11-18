@@ -1,9 +1,14 @@
 const Video = require("./../models/Video");
 const VideoThumbnail = require("./../models/VideoThumbnail");
+const VideoStatistics = require("./../models/VideoStatistic");
+const User = require("./../models/User");
+const UserAvatar = require("./../models/UserAvatar");
+const UserStatistic = require("./../models/UserStatistic");
 const thumbsupply = require("thumbsupply");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
+const WatchVideoInfo = require("./../VideoClasses/WatchVideoInfo");
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -26,6 +31,9 @@ class UserActionService {
         is_public: is_public,
         video_subject: subject,
         video_duration: duration,
+      });
+      const video_statistic = await VideoStatistics.create({
+        video: video._id,
       });
       return video;
     } catch (e) {
@@ -65,10 +73,29 @@ class UserActionService {
     }
   }
 
+  // channel_name,
+  //   count_subs,
+  //   count_views,
+  //   count_likes,
+  //   count_dislikes
+
   async loadVideoForWatch(video_id) {
     try {
       const video = await Video.findOne({ _id: video_id });
-      return video;
+      const video_stat = await VideoStatistics.findOne({ video: video_id });
+      const channel = await User.findOne({ _id: video.user });
+      const channel_avatar = await UserAvatar.findOne({ user: channel._id });
+      const channel_stat = await UserStatistic.findOne({ user: channel._id });
+      const video_info = new WatchVideoInfo(
+        channel.login,
+        channel_stat.count_of_subs,
+        video_stat.count_of_views,
+        video_stat.count_of_like,
+        video_stat.count_of_dislike,
+        channel_avatar.avatar_dir + channel_avatar.avatar_name
+      );
+      console.log(video_info);
+      return { ...video_info, video: video };
     } catch (e) {
       return "Ошибка при загруке видео: " + e;
     }
