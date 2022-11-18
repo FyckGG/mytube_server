@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User.js");
+const UserStatistic = require("./../models/UserStatistic");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./../config");
 const tokenService = require("./tokenService");
@@ -35,6 +36,9 @@ class UserServices {
       password: hashpassword,
       activationLink,
       img_profile,
+    });
+    const user_stat = await UserStatistic.create({
+      user: user._id,
     });
     await mailService.sendActivationMail(
       email,
