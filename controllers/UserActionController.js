@@ -24,8 +24,6 @@ class UserActionController {
   async upload_video(req, res, next) {
     try {
       if (req.file) {
-        console.log(req.file);
-        console.log(req.body);
         res.json({ video_name: req.file.filename });
       } else {
         throw new Error("Название видео не получено.");
