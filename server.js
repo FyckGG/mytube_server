@@ -6,6 +6,7 @@ const user_action_router = require("./router/UserActionRouter");
 const router = require("./router/UserRouter");
 const data_creation_router = require("./router/UserDataCreationRouter");
 const data_load_router = require("./router/UserDataLoadRouter");
+const vidoe_stats_router = require("./router/VideoStatsRouter");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
@@ -36,6 +37,7 @@ app.use("/users", router);
 app.use("/users-data-load", data_load_router);
 app.use("/users-data-creation", data_creation_router);
 app.use("/user-action", user_action_router);
+app.use("/video-stats", vidoe_stats_router);
 
 const start = async () => {
   try {
