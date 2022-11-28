@@ -14,8 +14,20 @@ class VideoStatsController {
   async add_mark(req, res, next) {
     try {
       const { video, user, is_like } = req.body;
+
       const result = await VideoStatsService.addMark(video, user, is_like);
-      return result;
+      return res.json(result);
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  }
+
+  async delete_mark(req, res, next) {
+    try {
+      const { video, user, is_like } = req.body;
+
+      const result = await VideoStatsService.deleteMark(video, user, is_like);
+      return res.json(result);
     } catch (e) {
       res.status(400).json({ error: e });
     }
