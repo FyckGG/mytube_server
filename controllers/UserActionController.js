@@ -24,7 +24,6 @@ class UserActionController {
   async upload_video(req, res, next) {
     try {
       if (req.file) {
-       
         res.json({ video_name: req.file.filename });
       } else {
         throw new Error("Название видео не получено.");
@@ -50,8 +49,11 @@ class UserActionController {
   }
   async load_video_for_watch(req, res, next) {
     try {
-      const { video_id } = req.body;
-      const result = await UserActionService.loadVideoForWatch(video_id);
+      const { video_id, user_id } = req.body;
+      const result = await UserActionService.loadVideoForWatch(
+        video_id,
+        user_id
+      );
       res.json(result);
     } catch (e) {
       res.status(400).send({ error: e.message });

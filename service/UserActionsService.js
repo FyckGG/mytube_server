@@ -4,6 +4,7 @@ const VideoStatistics = require("./../models/VideoStatistic");
 const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
 const UserStatistic = require("./../models/UserStatistic");
+const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const thumbsupply = require("thumbsupply");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
@@ -79,20 +80,28 @@ class UserActionService {
   //   count_likes,
   //   count_dislikes
 
-  async loadVideoForWatch(video_id) {
+  async loadVideoForWatch(video_id, user_id) {
     try {
       const video = await Video.findOne({ _id: video_id });
       const video_stat = await VideoStatistics.findOne({ video: video_id });
       const channel = await User.findOne({ _id: video.user });
       const channel_avatar = await UserAvatar.findOne({ user: channel._id });
       const channel_stat = await UserStatistic.findOne({ user: channel._id });
+      const video_mark = await LikeDislikeVideo.findOne({
+        video: video_id,
+        user: user_id,
+      });
+      console.log("ld");
+      const is_like = video_mark ? video_mark.is_like : null;
+      console.log(is_like);
       const video_info = new WatchVideoInfo(
         channel.login,
         channel_stat.count_of_subs,
         video_stat.count_of_views,
         video_stat.count_of_like,
         video_stat.count_of_dislike,
-        channel_avatar.avatar_dir + channel_avatar.avatar_name
+        channel_avatar.avatar_dir + channel_avatar.avatar_name,
+        is_like
       );
       console.log(video_info);
       return { ...video_info, video: video };
