@@ -4,6 +4,7 @@ const VideoStatistics = require("./../models/VideoStatistic");
 const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
 const UserStatistic = require("./../models/UserStatistic");
+const VideoComment = require("./../models/VideoComment");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const thumbsupply = require("thumbsupply");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
@@ -74,12 +75,6 @@ class UserActionService {
     }
   }
 
-  // channel_name,
-  //   count_subs,
-  //   count_views,
-  //   count_likes,
-  //   count_dislikes
-
   async loadVideoForWatch(video_id, user_id) {
     try {
       const video = await Video.findOne({ _id: video_id });
@@ -107,6 +102,23 @@ class UserActionService {
       return { ...video_info, video: video };
     } catch (e) {
       return "Ошибка при загруке видео: " + e;
+    }
+  }
+
+  async sendComment(video_id, user_id, text) {
+    try {
+      const video_stat = await VideoStatistics.findOne({ video: video_id });
+      const video_stat_id = video_stat._id;
+      const comment = await VideoComment.create({
+        video_stat: video_stat_id,
+        user: user_id,
+        comment_text: text,
+      });
+      video_stat.count_of_comments++;
+      video_stat.save();
+      return comment;
+    } catch (e) {
+      return "Ошибка при отправке комментария: " + e;
     }
   }
 }
