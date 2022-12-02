@@ -59,6 +59,20 @@ class UserActionController {
       res.status(400).send({ error: e.message });
     }
   }
+
+  async send_comment(req, res) {
+    try {
+      const { video_id, user_id, text } = req.body;
+      const result = await UserActionService.sendComment(
+        video_id,
+        user_id,
+        text
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();

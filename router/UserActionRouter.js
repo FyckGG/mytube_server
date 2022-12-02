@@ -19,4 +19,9 @@ router.post(
   UserActionController.create_video_thumbnail
 );
 router.post("/load-watch-video", UserActionController.load_video_for_watch);
+router.post(
+  "/send-comment",
+  authenticateToken,
+  UserActionController.send_comment
+);
 module.exports = router;
