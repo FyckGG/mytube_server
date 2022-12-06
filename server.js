@@ -5,8 +5,9 @@ const mongoose = require("mongoose");
 const user_action_router = require("./router/UserActionRouter");
 const router = require("./router/UserRouter");
 const data_creation_router = require("./router/UserDataCreationRouter");
-const data_load_router = require("./router/UserDataLoadRouter");
+const user_data_load_router = require("./router/UserDataLoadRouter");
 const vidoe_stats_router = require("./router/VideoStatsRouter");
+const data_load_router = require("./router/DataLoadRouter");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
@@ -34,10 +35,11 @@ app.use(
   express.static(path.join(__dirname, "userProfileImgs"))
 );
 app.use("/users", router);
-app.use("/users-data-load", data_load_router);
+app.use("/users-data-load", user_data_load_router);
 app.use("/users-data-creation", data_creation_router);
 app.use("/user-action", user_action_router);
 app.use("/video-stats", vidoe_stats_router);
+app.use("/data-load", data_load_router);
 
 const start = async () => {
   try {
