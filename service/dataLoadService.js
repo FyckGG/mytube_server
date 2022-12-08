@@ -15,7 +15,8 @@ class DataLoadService {
       throw new Error("Не удалось найти комментарии для данного видео.");
     const page_comment_list = [];
 
-    for (let i = 0; i < commentList.length; i++) {
+    //for (let i = 0; i < commentList.length; i++) {
+    for (let i = commentList.length - 1; i >= 0; i--) {
       const user = await User.findById(commentList[i].user);
       if (!user)
         throw new Error(
