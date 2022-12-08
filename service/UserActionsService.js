@@ -11,6 +11,7 @@ const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
 const WatchVideoInfo = require("./../VideoClasses/WatchVideoInfo");
+const PageComment = require("./../CommentClasses/PageComment");
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -116,7 +117,15 @@ class UserActionService {
       });
       video_stat.count_of_comments++;
       video_stat.save();
-      return comment;
+      const user = await User.findById(user_id);
+      const user_avatar = await UserAvatar.findOne({ user: user_id });
+      const page_comment = new PageComment(
+        user.login,
+        `${user_avatar.avatar_dir}${user_avatar.avatar_name}`,
+        comment.comment_text,
+        comment.comment_date
+      );
+      return page_comment;
     } catch (e) {
       return "Ошибка при отправке комментария: " + e;
     }
