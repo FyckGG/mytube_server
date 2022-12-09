@@ -29,10 +29,12 @@ class TokenService {
           videos[i].video_name,
           videos[i].video_duration,
           statistics.count_of_views,
-          `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`
+          `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`,
+          videos[i].upload_date
         );
         user_videos_arr.push(userVideo);
       }
+      console.log(user_videos_arr);
       return user_videos_arr;
     } catch (e) {
       console.log("Ошибка при получении видео: " + e);
