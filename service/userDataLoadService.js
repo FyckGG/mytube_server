@@ -1,6 +1,7 @@
 const UserAvatar = require("./../models/UserAvatar");
 const Video = require("./../models/Video");
 const VideoThumbnail = require("./../models/VideoThumbnail");
+const VideoStatistic = require("./../models/VideoStatistic");
 const UserVideo = require("./../VideoClasses/UserVideo");
 
 class TokenService {
@@ -16,20 +17,22 @@ class TokenService {
       const user_videos_arr = [];
       const videos = await Video.find({ user: user_id });
 
-      for (let i = 0; i < videos.length; i++) {
+      for (let i = videos.length - 1; i >= 0; i--) {
         const thumbnails = await VideoThumbnail.findOne({
+          video: videos[i]._id,
+        });
+        const statistics = await VideoStatistic.findOne({
           video: videos[i]._id,
         });
         const userVideo = new UserVideo(
           videos[i]._id,
           videos[i].video_name,
           videos[i].video_duration,
-          228,
+          statistics.count_of_views,
           `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`
         );
         user_videos_arr.push(userVideo);
       }
-
       return user_videos_arr;
     } catch (e) {
       console.log("Ошибка при получении видео: " + e);
