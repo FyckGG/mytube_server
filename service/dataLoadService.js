@@ -15,6 +15,8 @@ class DataLoadService {
       throw new Error("Не удалось найти комментарии для данного видео.");
     const page_comment_list = [];
 
+    commentList.reverse(commentList);
+
     const newCommentList = commentList.slice(comment_count - 5, comment_count);
 
     for (let i = 0; i < newCommentList.length; i++) {
