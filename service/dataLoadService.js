@@ -5,7 +5,7 @@ const UserAvatar = require("./../models/UserAvatar");
 const PageComment = require("./../CommentClasses/PageComment");
 
 class DataLoadService {
-  async loadComments(video_id) {
+  async loadComments(video_id, comment_count) {
     const video_stats = await VideoStatistic.findOne({ video: video_id });
     if (!video_stats) throw new Error("Не удалось загрузить статистику видео.");
     const commentList = await VideoComment.find({
@@ -15,15 +15,16 @@ class DataLoadService {
       throw new Error("Не удалось найти комментарии для данного видео.");
     const page_comment_list = [];
 
-    //for (let i = 0; i < commentList.length; i++) {
-    for (let i = commentList.length - 1; i >= 0; i--) {
-      const user = await User.findById(commentList[i].user);
+    const newCommentList = commentList.slice(comment_count - 5, comment_count);
+
+    for (let i = 0; i < newCommentList.length; i++) {
+      const user = await User.findById(newCommentList[i].user);
       if (!user)
         throw new Error(
           "Не удалось найти пользователя, оставившего комментарий."
         );
       const user_avatar = await UserAvatar.findOne({
-        user: commentList[i].user,
+        user: newCommentList[i].user,
       });
       if (!user_avatar)
         throw new Error(
@@ -32,8 +33,8 @@ class DataLoadService {
       const page_comment = new PageComment(
         user.login,
         `${user_avatar.avatar_dir}${user_avatar.avatar_name}`,
-        commentList[i].comment_text,
-        commentList[i].comment_date
+        newCommentList[i].comment_text,
+        newCommentList[i].comment_date
       );
       page_comment_list.push(page_comment);
     }
