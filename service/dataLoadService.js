@@ -17,10 +17,11 @@ class DataLoadService {
 
     commentList.reverse(commentList);
 
-    const newCommentList = commentList.slice(comment_count - 5, comment_count);
+    const newCommentList = commentList.slice(comment_count - 10, comment_count);
 
     for (let i = 0; i < newCommentList.length; i++) {
       const user = await User.findById(newCommentList[i].user);
+
       if (!user)
         throw new Error(
           "Не удалось найти пользователя, оставившего комментарий."
