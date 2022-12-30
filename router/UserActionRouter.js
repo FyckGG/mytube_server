@@ -24,5 +24,5 @@ router.post(
   authenticateToken,
   UserActionController.send_comment
 );
-router.post("/subscribe", UserActionController.subscribe);
+router.post("/subscribe", authenticateToken, UserActionController.subscribe);
 module.exports = router;
