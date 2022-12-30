@@ -4,6 +4,7 @@ const User = require("./../models/User");
 const VideoThumbnail = require("./../models/VideoThumbnail");
 const VideoStatistic = require("./../models/VideoStatistic");
 const UserStatistic = require("./../models/UserStatistic");
+const Subscription = require("./../models/Subscription");
 const UserVideo = require("./../VideoClasses/UserVideo");
 
 class TokenService {
@@ -62,6 +63,19 @@ class TokenService {
     } catch (e) {
       console.log("Ошибка при загрузке данных пользователя: " + e);
     }
+  }
+
+  async getSub(channel_id, subscriber_id) {
+    const channel = await User.findById(channel_id);
+    const subscriber = await User.findById(subscriber_id);
+    if (!channel || !subscriber)
+      throw new Error("Не удалось найти пользователя.");
+    const subscribtion = await Subscription.findOne({
+      channel: channel_id,
+      subscriber: subscriber_id,
+    });
+    if (subscribtion) return true;
+    else return false;
   }
 }
 

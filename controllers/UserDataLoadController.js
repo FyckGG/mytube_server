@@ -40,6 +40,19 @@ class UserDataLoadController {
       res.status(400).json({ error: e });
     }
   }
+
+  async loadSub(req, res) {
+    try {
+      const { channel_id, subscriber_id } = req.body;
+      const result = await UserDataLoadService.getSub(
+        channel_id,
+        subscriber_id
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  }
 }
 
 module.exports = new UserDataLoadController();
