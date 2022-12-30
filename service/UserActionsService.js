@@ -144,6 +144,11 @@ class UserActionService {
       if (!channel_stats)
         throw new Error("Не удалось загрузить статистику канала.");
 
+      const is_subs = await Subscription.findOne({
+        channel: channel_id,
+        subscriber: subscriber_id,
+      });
+      if (is_subs) throw new Error("Пользователь уже подписался.");
       const subscribe = await Subscription.create({
         channel: channel_id,
         subscriber: subscriber_id,
