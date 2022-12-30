@@ -14,6 +14,15 @@ class DataLoadController {
       res.status(400).send({ error: e });
     }
   }
+
+  async load_videos(req, res) {
+    try {
+      const result = await DataLoadService.loadVideos();
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e });
+    }
+  }
 }
 
 module.exports = new DataLoadController();

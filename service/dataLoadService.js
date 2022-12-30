@@ -1,8 +1,11 @@
 const VideoStatistic = require("./../models/VideoStatistic");
 const VideoComment = require("./../models/VideoComment");
+const Video = require("./../models/Video");
 const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
+const VideoThumbnail = require("./../models/VideoThumbnail");
 const PageComment = require("./../CommentClasses/PageComment");
+const PageVideo = require("./../VideoClasses/PageVideo");
 
 class DataLoadService {
   async loadComments(video_id, comment_count) {
@@ -44,6 +47,42 @@ class DataLoadService {
 
     const comments_count = video_stats.count_of_comments;
     return { comments_count: comments_count, comment_list: page_comment_list };
+  }
+
+  async loadVideos() {
+    const page_videos = [];
+    const videos = await Video.find();
+    for (let video of videos) {
+      let video_preview = await VideoThumbnail.findOne({ video: video._id });
+      if (!video_preview) throw new Error("Не удалось получить превью видео.");
+      let video_channel = await User.findById(video.user);
+      if (!video_channel)
+        throw new Error(
+          "Не удалось получить пользователя, загрузившего видео."
+        );
+      let channel_avatar = await UserAvatar.findOne({
+        user: video_channel._id,
+      });
+      if (!channel_avatar)
+        throw new Error("Не удалось получить аватар пользователя.");
+      let video_stats = await VideoStatistic.findOne({ video: video._id });
+      if (!video_stats)
+        throw new Error("Не удалось получить статистику видео.");
+      const video_for_page = new PageVideo(
+        video._id,
+        video.video_name,
+        `${video_preview.thumbnail_directory}/${video_preview.thumbnail_name}`,
+        video_channel._id,
+        video_channel.login,
+        `${channel_avatar.avatar_dir}${channel_avatar.avatar_name}`,
+        video_stats.count_of_views,
+        video.video_duration,
+        video.upload_date
+      );
+      //console.log(video_for_page);
+      page_videos.push(video_for_page);
+    }
+    return page_videos;
   }
 }
 
