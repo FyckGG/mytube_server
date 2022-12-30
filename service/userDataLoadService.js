@@ -1,5 +1,6 @@
 const UserAvatar = require("./../models/UserAvatar");
 const Video = require("./../models/Video");
+const User = require("./../models/User");
 const VideoThumbnail = require("./../models/VideoThumbnail");
 const VideoStatistic = require("./../models/VideoStatistic");
 const UserStatistic = require("./../models/UserStatistic");
@@ -35,7 +36,7 @@ class TokenService {
         );
         user_videos_arr.push(userVideo);
       }
-      console.log(user_videos_arr);
+
       return user_videos_arr;
     } catch (e) {
       console.log("Ошибка при получении видео: " + e);
@@ -50,6 +51,16 @@ class TokenService {
       return user_stats;
     } catch (e) {
       console.log("Ошибка при загрузке статистики пользователя: " + e);
+    }
+  }
+
+  async loadUser(user_id) {
+    try {
+      const user = await User.findById(user_id);
+      if (!user) throw new Error("Пользователь не найден!");
+      return user;
+    } catch (e) {
+      console.log("Ошибка при загрузке данных пользователя: " + e);
     }
   }
 }
