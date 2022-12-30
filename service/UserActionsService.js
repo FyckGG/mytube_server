@@ -4,6 +4,7 @@ const VideoStatistics = require("./../models/VideoStatistic");
 const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
 const UserStatistic = require("./../models/UserStatistic");
+const Subscription = require("./../models/Subscription");
 const VideoComment = require("./../models/VideoComment");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const thumbsupply = require("thumbsupply");
@@ -87,9 +88,9 @@ class UserActionService {
         video: video_id,
         user: user_id,
       });
-      console.log("ld");
+
       const is_like = video_mark ? video_mark.is_like : null;
-      console.log(is_like);
+
       const video_info = new WatchVideoInfo(
         channel.login,
         channel_stat.count_of_subs,
@@ -99,7 +100,7 @@ class UserActionService {
         channel_avatar.avatar_dir + channel_avatar.avatar_name,
         is_like
       );
-      console.log(video_info);
+
       return { ...video_info, video: video };
     } catch (e) {
       return "Ошибка при загруке видео: " + e;
@@ -128,6 +129,31 @@ class UserActionService {
       return page_comment;
     } catch (e) {
       return "Ошибка при отправке комментария: " + e;
+    }
+  }
+
+  async subscribe(channel_id, subscriber_id) {
+    try {
+      if (channel_id === subscriber_id)
+        throw new Error("Попытка подписки на самого себя.");
+      const channel = await User.findById(channel_id);
+      const subscriber = await User.findById(subscriber_id);
+      if (!channel || !subscriber)
+        throw new Error("Несуществующий пользователь.");
+      const channel_stats = await UserStatistic.findOne({ user: channel_id });
+      if (!channel_stats)
+        throw new Error("Не удалось загрузить статистику канала.");
+
+      const subscribe = await Subscription.create({
+        channel: channel_id,
+        subscriber: subscriber_id,
+      });
+      channel_stats.count_of_subs++;
+      channel_stats.save();
+      return subscribe;
+    } catch (e) {
+      console.log(e);
+      return e;
     }
   }
 }

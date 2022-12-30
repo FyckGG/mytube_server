@@ -73,6 +73,20 @@ class UserActionController {
       res.status(400).send({ error: e.message });
     }
   }
+
+  async subscribe(req, res) {
+    try {
+      const { channel_id, subscriber_id } = req.body;
+
+      const result = await UserActionService.subscribe(
+        channel_id,
+        subscriber_id
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ erroe: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();
