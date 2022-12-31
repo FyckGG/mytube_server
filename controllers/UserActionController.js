@@ -87,6 +87,19 @@ class UserActionController {
       res.status(400).send({ erroe: e.message });
     }
   }
+
+  async unsubscribe(req, res) {
+    try {
+      const { channel_id, subscriber_id } = req.body;
+      const result = await UserActionService.unsubscribe(
+        channel_id,
+        subscriber_id
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ erroe: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();

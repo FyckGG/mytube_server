@@ -161,6 +161,33 @@ class UserActionService {
       return e;
     }
   }
+  async unsubscribe(channel_id, subscriber_id) {
+    try {
+      if (channel_id === subscriber_id)
+        throw new Error("Попытка отписки от самого себя.");
+      const channel = await User.findById(channel_id);
+      const subscriber = await User.findById(subscriber_id);
+      if (!channel || !subscriber)
+        throw new Error("Несуществующий пользователь.");
+      const channel_stats = await UserStatistic.findOne({ user: channel_id });
+      if (!channel_stats)
+        throw new Error("Не удалось загрузить статистику канала.");
+      const is_subs = await Subscription.findOne({
+        channel: channel_id,
+        subscriber: subscriber_id,
+      });
+      if (!is_subs) throw new Error("Подписка не найдена.");
+      const unsubscribe = await Subscription.deleteOne({
+        channel: channel_id,
+        subscriber: subscriber_id,
+      });
+      channel_stats.count_of_subs--;
+      channel_stats.save();
+      return unsubscribe;
+    } catch (e) {
+      return e;
+    }
+  }
 }
 
 module.exports = new UserActionService();
