@@ -77,6 +77,18 @@ class TokenService {
     if (subscribtion) return true;
     else return false;
   }
+
+  async getChannelStatus(user_id, video_id) {
+    const channel = await Video.findById(video_id);
+    if (!channel) throw new Error("Не удалось найти видео по id.");
+    if (!user_id) return { channel: channel.user, subs_status: undefined };
+    const subs_info = await Subscription.findOne({
+      channel: channel.user,
+      subscriber: user_id,
+    });
+    if (subs_info) return { channel: channel.user, subs_status: true };
+    else return { channel: channel.user, subs_status: false };
+  }
 }
 
 module.exports = new TokenService();

@@ -53,6 +53,19 @@ class UserDataLoadController {
       res.status(400).json({ error: e });
     }
   }
+
+  async get_channel_status(req, res) {
+    try {
+      const { user_id, video_id } = req.body;
+      const result = await UserDataLoadService.getChannelStatus(
+        user_id,
+        video_id
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  }
 }
 
 module.exports = new UserDataLoadController();

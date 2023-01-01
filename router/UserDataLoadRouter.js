@@ -9,4 +9,5 @@ router.post("/get-user-videos", UserDataLoadController.loadUserVideos);
 router.post("/get-user-stats", UserDataLoadController.loadUserStats);
 router.post("/get-user", UserDataLoadController.loadUser);
 router.post("/get-sub", authenticateToken, UserDataLoadController.loadSub);
+router.post("/get-channel-status", UserDataLoadController.get_channel_status);
 module.exports = router;
