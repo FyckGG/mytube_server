@@ -37,6 +37,7 @@ class DataLoadService {
           "Не удалось найти аватар пользователя, оставившего комментарий."
         );
       const page_comment = new PageComment(
+        newCommentList[i].user,
         user.login,
         `${user_avatar.avatar_dir}${user_avatar.avatar_name}`,
         newCommentList[i].comment_text,
