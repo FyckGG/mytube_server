@@ -6,7 +6,7 @@ const User = new Schema({
   password: { type: String, unique: true, required: true },
   isActivated: { type: Boolean, default: false },
   activationLink: { type: String },
-  img_profile: { type: String, default: "vfvfv" },
+  sign_date: { type: Date, default: Date.now },
 });
 
 module.exports = new model("User", User);
