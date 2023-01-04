@@ -76,6 +76,16 @@ class UserDataLoadController {
       res.status(400).json({ error: e });
     }
   }
+
+  async get_subs_channels(req, res) {
+    try {
+      const { user_id } = req.body;
+      const result = await UserDataLoadService.getSubsChannels(user_id);
+      res.json(result);
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  }
 }
 
 module.exports = new UserDataLoadController();

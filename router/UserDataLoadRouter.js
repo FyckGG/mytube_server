@@ -15,4 +15,9 @@ router.post(
   authenticateToken,
   UserDataLoadController.get_liked_videos
 );
+router.post(
+  "/get-subs-channels",
+  authenticateToken,
+  UserDataLoadController.get_subs_channels
+);
 module.exports = router;

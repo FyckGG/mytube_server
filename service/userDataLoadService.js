@@ -8,6 +8,7 @@ const Subscription = require("./../models/Subscription");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const UserVideo = require("./../VideoClasses/UserVideo");
 const getPageVIdeo = require("./../otherServices/getPageVideo");
+const SubsChannel = require("./../SubscriptionsClasses/SubsChannel");
 
 class TokenService {
   async findAvatar(id) {
@@ -109,6 +110,31 @@ class TokenService {
       page_videos.push(page_video);
     }
     return page_videos;
+  }
+
+  async getSubsChannels(user_id) {
+    const page_channels = [];
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Пользователь не найден.");
+    const subs_channels = await Subscription.find({ subscriber: user_id });
+    subs_channels.reverse();
+    for (let subs_channel of subs_channels) {
+      const channel = await User.findById(subs_channel.channel);
+      const channel_avatar = await UserAvatar.findOne({
+        user: subs_channel.channel,
+      });
+      const channel_stats = await UserStatistic.findOne({
+        user: subs_channel.channel,
+      });
+      const page_channel = new SubsChannel(
+        subs_channel.channel,
+        channel.login,
+        `${channel_avatar.avatar_dir}${channel_avatar.avatar_name}`,
+        channel_stats.count_of_subs
+      );
+      page_channels.push(page_channel);
+    }
+    return page_channels;
   }
 }
 
