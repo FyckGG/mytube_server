@@ -5,7 +5,9 @@ const VideoThumbnail = require("./../models/VideoThumbnail");
 const VideoStatistic = require("./../models/VideoStatistic");
 const UserStatistic = require("./../models/UserStatistic");
 const Subscription = require("./../models/Subscription");
+const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const UserVideo = require("./../VideoClasses/UserVideo");
+const getPageVIdeo = require("./../otherServices/getPageVideo");
 
 class TokenService {
   async findAvatar(id) {
@@ -88,6 +90,25 @@ class TokenService {
     });
     if (subs_info) return { channel: channel.user, subs_status: true };
     else return { channel: channel.user, subs_status: false };
+  }
+
+  async getLikedVideos(user_id) {
+    const page_videos = [];
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Несуществующий пользователь.");
+    const videos_likes = await LikeDislikeVideo.find({
+      user: user_id,
+      is_like: true,
+    });
+    videos_likes.reverse();
+    for (let video of videos_likes) {
+      const like_video = await Video.findById(video.video);
+      const page_video = await getPageVIdeo(like_video);
+      console.log(page_video);
+
+      page_videos.push(page_video);
+    }
+    return page_videos;
   }
 }
 

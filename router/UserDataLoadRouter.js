@@ -10,4 +10,9 @@ router.post("/get-user-stats", UserDataLoadController.loadUserStats);
 router.post("/get-user", UserDataLoadController.loadUser);
 router.post("/get-sub", authenticateToken, UserDataLoadController.loadSub);
 router.post("/get-channel-status", UserDataLoadController.get_channel_status);
+router.post(
+  "/get-liked-videos",
+  authenticateToken,
+  UserDataLoadController.get_liked_videos
+);
 module.exports = router;

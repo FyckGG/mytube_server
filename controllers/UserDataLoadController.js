@@ -66,6 +66,16 @@ class UserDataLoadController {
       res.status(400).json({ error: e });
     }
   }
+
+  async get_liked_videos(req, res) {
+    try {
+      const { user_id } = req.body;
+      const result = await UserDataLoadService.getLikedVideos(user_id);
+      res.json(result);
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  }
 }
 
 module.exports = new UserDataLoadController();
