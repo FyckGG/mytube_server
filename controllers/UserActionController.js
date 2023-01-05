@@ -97,7 +97,20 @@ class UserActionController {
       );
       res.json(result);
     } catch (e) {
-      res.status(400).send({ erroe: e.message });
+      res.status(400).send({ error: e.message });
+    }
+  }
+
+  async add_to_watch_later(req, res) {
+    try {
+      const { video_id, user_id } = req.body;
+      const result = await UserActionsService.addToWatchLater(
+        video_id,
+        user_id
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
     }
   }
 }

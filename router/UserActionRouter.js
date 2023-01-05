@@ -30,4 +30,9 @@ router.post(
   authenticateToken,
   UserActionController.unsubscribe
 );
+router.post(
+  "/add-watch-later",
+  authenticateToken,
+  UserActionController.unsubscribe
+);
 module.exports = router;

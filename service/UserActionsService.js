@@ -7,6 +7,7 @@ const UserStatistic = require("./../models/UserStatistic");
 const Subscription = require("./../models/Subscription");
 const VideoComment = require("./../models/VideoComment");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
+const WatchLaterVideo = require("./../models/WatchLaterVideo");
 const thumbsupply = require("thumbsupply");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
@@ -186,6 +187,18 @@ class UserActionService {
     } catch (e) {
       return e;
     }
+  }
+
+  async addToWatchLater(video_id, user_id) {
+    const video = await Video.findById(video_id);
+    const user = await User.findById(user_id);
+    if (!video) throw new Error("Пользователь не найден.");
+    if (!user) throw new Error("Видео не найдено.");
+    const watch_later_res = WatchLaterVideo.create({
+      video: video_id,
+      user: user_id,
+    });
+    return watch_later_res;
   }
 }
 
