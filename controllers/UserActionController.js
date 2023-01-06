@@ -113,6 +113,19 @@ class UserActionController {
       res.status(400).send({ error: e.message });
     }
   }
+
+  async delete_watch_later(req, res) {
+    try {
+      const { video_id, user_id } = req.body;
+      const result = await UserActionsService.deleteWatchLater(
+        video_id,
+        user_id
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();

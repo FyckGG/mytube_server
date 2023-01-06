@@ -194,11 +194,30 @@ class UserActionService {
     const user = await User.findById(user_id);
     if (!video) throw new Error("Пользователь не найден.");
     if (!user) throw new Error("Видео не найдено.");
-    const watch_later_res = WatchLaterVideo.create({
+    const watch_later_video = await WatchLaterVideo.findOne({
+      video: video_id,
+      user: user_id,
+    });
+    if (watch_later_video !== null)
+      throw new Error("Запись о просмотре позже уже добавлена.");
+    const watch_later_res = await WatchLaterVideo.create({
       video: video_id,
       user: user_id,
     });
     return watch_later_res;
+  }
+
+  async deleteWatchLater(video_id, user_id) {
+    const video = await Video.findById(video_id);
+    const user = await User.findById(user_id);
+    if (!video) throw new Error("Пользователь не найден.");
+    if (!user) throw new Error("Видео не найдено.");
+    const watch_later_result = await WatchLaterVideo.deleteOne({
+      video: video_id,
+      user: user_id,
+    });
+
+    return watch_later_result;
   }
 }
 

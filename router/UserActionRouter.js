@@ -35,4 +35,9 @@ router.post(
   authenticateToken,
   UserActionController.add_to_watch_later
 );
+router.post(
+  "/delete-watch-later",
+  authenticateToken,
+  UserActionController.delete_watch_later
+);
 module.exports = router;
