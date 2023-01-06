@@ -33,6 +33,6 @@ router.post(
 router.post(
   "/add-watch-later",
   authenticateToken,
-  UserActionController.unsubscribe
+  UserActionController.add_to_watch_later
 );
 module.exports = router;
