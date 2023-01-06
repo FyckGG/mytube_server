@@ -3,6 +3,7 @@ const VideoThumbnail = require("./../models/VideoThumbnail");
 const User = require("./../models/User");
 const VideoStatistic = require("./../models/UserStatistic");
 const UserAvatar = require("./../models/UserAvatar");
+const WatchLaterVideo = require("./../models/WatchLaterVideo");
 
 const getPageVIdeo = async (video) => {
   let video_preview = await VideoThumbnail.findOne({ video: video._id });
@@ -17,6 +18,10 @@ const getPageVIdeo = async (video) => {
     throw new Error("Не удалось получить аватар пользователя.");
   let video_stats = await VideoStatistic.findOne({ video: video._id });
   if (!video_stats) throw new Error("Не удалось получить статистику видео.");
+  let is_video_for_later_watching = await WatchLaterVideo.findOne({
+    video: video._id,
+    user: video_channel._id,
+  });
   const video_for_page = new PageVideo(
     video._id,
     video.video_name,
@@ -26,7 +31,8 @@ const getPageVIdeo = async (video) => {
     `${channel_avatar.avatar_dir}${channel_avatar.avatar_name}`,
     video_stats.count_of_views,
     video.video_duration,
-    video.upload_date
+    video.upload_date,
+    is_video_for_later_watching ? true : false
   );
   return video_for_page;
 };
