@@ -1,11 +1,19 @@
 const VideoStatistic = require("./../models/VideoStatistic");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
+const Video = require("./../models/Video");
+const User = require("./../models/User");
+const UserStatistic = require("./../models/UserStatistic");
 
 class VideoStatsService {
   async addView(video_id) {
+    const video = await Video.findById(video_id);
+    if (!video) throw new Error("Видео не найдено.");
     const video_stats = await VideoStatistic.findOne({ video: video_id });
+    if (!video_stats) throw new Error("Статистика видео не найдена.");
     video_stats.count_of_views++;
-
+    const user_stats = await UserStatistic.findOne({ user: video.user });
+    user_stats.count_of_views++;
+    user_stats.save();
     return video_stats.save();
   }
 
