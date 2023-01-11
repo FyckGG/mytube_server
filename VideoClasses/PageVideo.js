@@ -8,7 +8,7 @@ module.exports = class PageVideo {
   count_views;
   video_duration;
   video_date;
-  is_watch_later;
+  // is_watch_later;
   constructor(
     video_id,
     video_name,
@@ -18,8 +18,7 @@ module.exports = class PageVideo {
     channel_avatar,
     count_views,
     video_duration,
-    video_date,
-    is_watch_later
+    video_date
   ) {
     this.video_id = video_id;
     this.video_name = video_name;
@@ -30,6 +29,5 @@ module.exports = class PageVideo {
     this.count_views = count_views;
     this.video_duration = video_duration;
     this.video_date = video_date;
-    this.is_watch_later = is_watch_later;
   }
 };
