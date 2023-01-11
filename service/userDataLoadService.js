@@ -19,10 +19,10 @@ class TokenService {
     return avatar;
   }
 
-  async loadUserVideos(user_id) {
+  async loadUserVideos(channel_id, user_id) {
     try {
       const user_videos_arr = [];
-      const videos = await Video.find({ user: user_id });
+      const videos = await Video.find({ user: channel_id });
 
       for (let i = videos.length - 1; i >= 0; i--) {
         const thumbnails = await VideoThumbnail.findOne({
@@ -39,7 +39,16 @@ class TokenService {
           `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`,
           videos[i].upload_date
         );
-        user_videos_arr.push(userVideo);
+        if (user_id) {
+          const is_watch_later = await WatchLaterVideo.findOne({
+            video: videos[i]._id,
+            user: user_id,
+          });
+          if (is_watch_later == null)
+            user_videos_arr.push({ ...userVideo, is_watch_later: false });
+          if (is_watch_later != null)
+            user_videos_arr.push({ ...userVideo, is_watch_later: true });
+        } else user_videos_arr.push(userVideo);
       }
 
       return user_videos_arr;

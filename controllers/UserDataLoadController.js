@@ -13,8 +13,11 @@ class UserDataLoadController {
   }
   async loadUserVideos(req, res, next) {
     try {
-      const { user_id } = req.body;
-      const result = await UserDataLoadService.loadUserVideos(user_id);
+      const { channel_id, user_id } = req.body;
+      const result = await UserDataLoadService.loadUserVideos(
+        channel_id,
+        user_id
+      );
       return res.json(result);
     } catch (e) {
       res.status(400).json({ error: e });
