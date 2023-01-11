@@ -106,10 +106,16 @@ class TokenService {
     for (let video of videos_likes) {
       const like_video = await Video.findById(video.video);
       const page_video = await getPageVIdeo(like_video);
-      console.log(page_video);
+      const is_watch_later = await WatchLaterVideo.findOne({
+        video: video.video,
+        user: user_id,
+      });
 
-      page_videos.push(page_video);
+      if (is_watch_later != null)
+        page_videos.push({ ...page_video, is_watch_later: true });
+      else page_videos.push({ ...page_video, is_watch_later: false });
     }
+
     return page_videos;
   }
 
