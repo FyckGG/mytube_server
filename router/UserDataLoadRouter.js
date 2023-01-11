@@ -20,4 +20,9 @@ router.post(
   authenticateToken,
   UserDataLoadController.get_subs_channels
 );
+router.post(
+  "/get-watch-later-videos",
+  authenticateToken,
+  UserDataLoadController.get_watch_later_videos
+);
 module.exports = router;

@@ -6,6 +6,7 @@ const VideoStatistic = require("./../models/VideoStatistic");
 const UserStatistic = require("./../models/UserStatistic");
 const Subscription = require("./../models/Subscription");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
+const WatchLaterVideo = require("./../models/WatchLaterVideo");
 const UserVideo = require("./../VideoClasses/UserVideo");
 const getPageVIdeo = require("./../otherServices/getPageVideo");
 const SubsChannel = require("./../SubscriptionsClasses/SubsChannel");
@@ -135,6 +136,19 @@ class TokenService {
       page_channels.push(page_channel);
     }
     return page_channels;
+  }
+  async getWatchLaterVideos(user_id) {
+    const watch_later_videos = [];
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Пользователь не найден.");
+    const watch_later_list = await WatchLaterVideo.find({ user: user_id });
+    for (let video of watch_later_list) {
+      const watch_later_video = await Video.findById(video.video);
+      const page_video = await getPageVIdeo(watch_later_video);
+
+      watch_later_videos.push(page_video);
+    }
+    return watch_later_videos;
   }
 }
 

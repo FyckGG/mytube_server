@@ -86,6 +86,16 @@ class UserDataLoadController {
       res.status(400).json({ error: e });
     }
   }
+
+  async get_watch_later_videos(req, res) {
+    try {
+      const { user_id } = req.body;
+      const result = await UserDataLoadService.getWatchLaterVideos(user_id);
+      res.json(result);
+    } catch (e) {
+      res.status(400).json({ error: e });
+    }
+  }
 }
 
 module.exports = new UserDataLoadController();
