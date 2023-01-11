@@ -45,9 +45,19 @@ class TokenService {
             user: user_id,
           });
           if (is_watch_later == null)
-            user_videos_arr.push({ ...userVideo, is_watch_later: false });
+            user_videos_arr.push({
+              ...userVideo,
+              count_of_likes: statistics.count_of_like,
+              count_of_dislikes: statistics.count_of_dislike,
+              is_watch_later: false,
+            });
           if (is_watch_later != null)
-            user_videos_arr.push({ ...userVideo, is_watch_later: true });
+            user_videos_arr.push({
+              ...userVideo,
+              count_of_likes: statistics.count_of_like,
+              count_of_dislikes: statistics.count_of_dislike,
+              is_watch_later: true,
+            });
         } else user_videos_arr.push(userVideo);
       }
 
