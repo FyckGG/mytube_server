@@ -121,6 +121,8 @@ class UserActionService {
       const user = await User.findById(user_id);
       const user_avatar = await UserAvatar.findOne({ user: user_id });
       const page_comment = new PageComment(
+        comment._id,
+        user._id,
         user.login,
         `${user_avatar.avatar_dir}${user_avatar.avatar_name}`,
         comment.comment_text,
