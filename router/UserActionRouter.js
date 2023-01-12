@@ -40,4 +40,9 @@ router.post(
   authenticateToken,
   UserActionController.delete_watch_later
 );
+router.post(
+  "/delete-comment",
+  authenticateToken,
+  UserActionController.delete_comment
+);
 module.exports = router;

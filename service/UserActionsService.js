@@ -132,6 +132,22 @@ class UserActionService {
     }
   }
 
+  async deleteComment(comment) {
+    try {
+      const comment_for_deleting = await VideoComment.findById(comment);
+      if (!comment_for_deleting)
+        throw new Error("Не удалось найти комментарий для удаления.");
+      const deleted_comment = await VideoComment.deleteOne({ _id: comment });
+      const video_stats = await VideoStatistics.findOne({
+        _id: comment_for_deleting.video_stat,
+      });
+      video_stats.count_of_comments--;
+      return video_stats.save();
+    } catch (e) {
+      return "Ошибка при удалении комментария: " + e;
+    }
+  }
+
   async subscribe(channel_id, subscriber_id) {
     try {
       if (channel_id === subscriber_id)

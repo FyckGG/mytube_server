@@ -74,6 +74,16 @@ class UserActionController {
     }
   }
 
+  async delete_comment(req, res) {
+    try {
+      const { comment_id } = req.body;
+      const result = await UserActionService.deleteComment(comment_id);
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
+
   async subscribe(req, res) {
     try {
       const { channel_id, subscriber_id } = req.body;
