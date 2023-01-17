@@ -88,7 +88,6 @@ class UserActionService {
         video: video_id,
         user: user_id,
       });
-
       const is_like = video_mark ? video_mark.is_like : null;
 
       const video_info = new WatchVideoInfo(
