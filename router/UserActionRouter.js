@@ -45,4 +45,6 @@ router.post(
   authenticateToken,
   UserActionController.delete_comment
 );
+
+router.post("/edit-video", authenticateToken, UserActionController.edit_video);
 module.exports = router;

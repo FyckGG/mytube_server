@@ -237,6 +237,15 @@ class UserActionService {
 
     return watch_later_result;
   }
+
+  async editVideo(video_id, video_name, video_description, video_access) {
+    const video = await Video.findById(video_id);
+    if (!video) throw new Error("Видео для редактирования не найдено");
+    video.video_name = video_name;
+    video.video_description = video_description;
+    video.is_public = video_access;
+    return video.save();
+  }
 }
 
 module.exports = new UserActionService();

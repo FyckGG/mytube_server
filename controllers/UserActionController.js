@@ -136,6 +136,16 @@ class UserActionController {
       res.status(400).send({ error: e.message });
     }
   }
+
+  async edit_video(req, res) {
+    try {
+      const { video_id, video_name, video_description, video_access } =  req.body;
+      const result = await UserActionService.editVideo(video_id, video_name, video_description, video_access);
+      res.json(result)
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();
