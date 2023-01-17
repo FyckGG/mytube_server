@@ -8,6 +8,7 @@ const data_creation_router = require("./router/UserDataCreationRouter");
 const user_data_load_router = require("./router/UserDataLoadRouter");
 const vidoe_stats_router = require("./router/VideoStatsRouter");
 const data_load_router = require("./router/DataLoadRouter");
+const video_data_load_router = require("./router/VideoDataLoaderRouter");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
@@ -40,6 +41,7 @@ app.use("/users-data-creation", data_creation_router);
 app.use("/user-action", user_action_router);
 app.use("/video-stats", vidoe_stats_router);
 app.use("/data-load", data_load_router);
+app.use("/video-data-load", video_data_load_router);
 
 const start = async () => {
   try {
