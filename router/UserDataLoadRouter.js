@@ -20,6 +20,7 @@ router.post(
   authenticateToken,
   UserDataLoadController.get_subs_channels
 );
+router.post("/get-video-mark", UserDataLoadController.get_video_mark);
 router.post(
   "/get-watch-later-videos",
   authenticateToken,

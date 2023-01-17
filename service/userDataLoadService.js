@@ -113,6 +113,18 @@ class TokenService {
     else return { channel: channel.user, subs_status: false };
   }
 
+  async getVideoMark(user_id, video_id) {
+    const user = await User.findById(user_id);
+    if (!user && user_id) throw new Error("Не удалось найти пользователя.");
+    const video = await Video.findById(video_id);
+    if (!video) throw new Error("Не удалось найти видео.");
+    const video_mark = await LikeDislikeVideo.findOne({
+      video: video_id,
+      user: user_id,
+    });
+    return video_mark;
+  }
+
   async getLikedVideos(user_id) {
     const page_videos = [];
     const user = await User.findById(user_id);
