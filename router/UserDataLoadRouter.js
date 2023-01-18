@@ -26,4 +26,8 @@ router.post(
   authenticateToken,
   UserDataLoadController.get_watch_later_videos
 );
+router.post(
+  "/get-channel-description",
+  UserDataLoadController.get_channel_description
+);
 module.exports = router;

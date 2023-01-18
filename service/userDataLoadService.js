@@ -7,6 +7,7 @@ const UserStatistic = require("./../models/UserStatistic");
 const Subscription = require("./../models/Subscription");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const WatchLaterVideo = require("./../models/WatchLaterVideo");
+const ChannelDesciption = require("./../models/ChannelDesciption");
 const UserVideo = require("./../VideoClasses/UserVideo");
 const getPageVIdeo = require("./../otherServices/getPageVideo");
 const SubsChannel = require("./../SubscriptionsClasses/SubsChannel");
@@ -186,6 +187,14 @@ class TokenService {
       watch_later_videos.push(page_video);
     }
     return watch_later_videos;
+  }
+
+  async getChannelDescription(user_id) {
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Пользователь не найден.");
+    const description = await ChannelDesciption.findOne({ user: user_id });
+    if (!description) throw new Error("Описание канала не найдено.");
+    return description;
   }
 }
 
