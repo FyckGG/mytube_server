@@ -12,4 +12,10 @@ router.post(
   UserDataChangeController.change_avatar
 );
 
+router.post(
+  "/change-channel-description",
+  authenticateToken,
+  UserDataChangeController.change_description
+);
+
 module.exports = router;

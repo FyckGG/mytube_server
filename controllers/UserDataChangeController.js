@@ -4,15 +4,27 @@ class UserDataChangeController {
   async change_avatar(req, res) {
     try {
       if (req.file) {
-        //console.log(req.file);
-        //console.log(req.body);
         const { id } = req.body;
-        //console.log(id);
+
         const avatar_change_result = await UserDataChangeService.changeAvatar(
           id,
           req.file.filename
         );
+        res.json({ avatar_change_result });
       } else throw new Error("Имя изображения не получено.");
+    } catch (e) {
+      res.status.send({ error: e });
+    }
+  }
+
+  async change_description(req, res) {
+    try {
+      const { user_id, text } = req.body;
+      const result = await UserDataChangeService.changeChannelDescription(
+        user_id,
+        text
+      );
+      res.json({ result });
     } catch (e) {
       res.status.send({ error: e });
     }
