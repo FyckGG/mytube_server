@@ -6,6 +6,7 @@ const user_action_router = require("./router/UserActionRouter");
 const router = require("./router/UserRouter");
 const data_creation_router = require("./router/UserDataCreationRouter");
 const user_data_load_router = require("./router/UserDataLoadRouter");
+const user_data_change_router = require("./router/UserDataChangeRouter");
 const vidoe_stats_router = require("./router/VideoStatsRouter");
 const data_load_router = require("./router/DataLoadRouter");
 const video_data_load_router = require("./router/VideoDataLoaderRouter");
@@ -42,6 +43,7 @@ app.use("/user-action", user_action_router);
 app.use("/video-stats", vidoe_stats_router);
 app.use("/data-load", data_load_router);
 app.use("/video-data-load", video_data_load_router);
+app.use("/user-data-change", user_data_change_router);
 
 const start = async () => {
   try {
