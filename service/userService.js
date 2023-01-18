@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User.js");
 const UserStatistic = require("./../models/UserStatistic");
+const ChannelDescription = require("./../models/ChannelDesciption");
 const jwt = require("jsonwebtoken");
 const { secret } = require("./../config");
 const tokenService = require("./tokenService");
@@ -38,6 +39,9 @@ class UserServices {
       img_profile,
     });
     const user_stat = await UserStatistic.create({
+      user: user._id,
+    });
+    const channel_description = await ChannelDescription.create({
       user: user._id,
     });
     await mailService.sendActivationMail(
