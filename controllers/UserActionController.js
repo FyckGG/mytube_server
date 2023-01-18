@@ -139,9 +139,17 @@ class UserActionController {
 
   async edit_video(req, res) {
     try {
-      const { video_id, video_name, video_description, video_access } =  req.body;
-      const result = await UserActionService.editVideo(video_id, video_name, video_description, video_access);
-      res.json(result)
+      const { user, video_id, video_name, video_description, video_access } =
+        req.body;
+
+      const result = await UserActionService.editVideo(
+        user,
+        video_id,
+        video_name,
+        video_description,
+        video_access
+      );
+      res.json(result);
     } catch (e) {
       res.status(400).send({ error: e.message });
     }

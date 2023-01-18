@@ -237,12 +237,25 @@ class UserActionService {
     return watch_later_result;
   }
 
-  async editVideo(video_id, video_name, video_description, video_access) {
+  async editVideo(
+    user_id,
+    video_id,
+    video_name,
+    video_description,
+    video_access
+  ) {
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Пользователь не найден");
     const video = await Video.findById(video_id);
+    console.log(video.user);
+    if (video.user != user_id) {
+      throw new Error("Пользователь не имеет права редактировать это видео");
+    }
     if (!video) throw new Error("Видео для редактирования не найдено");
     video.video_name = video_name;
     video.video_description = video_description;
     video.is_public = video_access;
+
     return video.save();
   }
 }
