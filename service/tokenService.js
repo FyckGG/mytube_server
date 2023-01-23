@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const { secret } = require("./../config");
 const Token = require("./../models/Token");
+const ResetToken = require("./../models/ResetToken");
 
 class TokenService {
   generateToken(payload) {
@@ -13,6 +14,13 @@ class TokenService {
     return { accessToken, refreshToken };
   }
 
+  generateResetToken(payload) {
+    const resetToken = jwt.sign(payload, process.env.JWT_RESET_SECRET, {
+      expiresIn: "60m",
+    });
+    return resetToken;
+  }
+
   async saveToken(userId, refreshToken) {
     const tokenData = await Token.findOne({ user: userId });
     if (tokenData) {
@@ -22,6 +30,19 @@ class TokenService {
     const token = await Token.create({
       user: userId,
       refreshToken: refreshToken,
+    });
+    return token;
+  }
+
+  async saveResetToken(userId, resetToken) {
+    const tokenData = await ResetToken.findOne({ user: userId });
+    if (tokenData) {
+      tokenData.resetToken = resetToken;
+      return tokenData.save();
+    }
+    const token = await ResetToken.create({
+      user: userId,
+      resetToken: resetToken,
     });
     return token;
   }

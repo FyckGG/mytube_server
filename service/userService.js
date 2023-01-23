@@ -7,8 +7,8 @@ const { secret } = require("./../config");
 const tokenService = require("./tokenService");
 const UserDto = require("../dtos/userDto.js");
 const ApiError = require("./../exceptions/apiError");
-const MailService = require("./mailService");
 const mailService = require("./mailService");
+
 const uuid = require("uuid");
 
 // const generateAccesToken = (id, em_log) => {
@@ -92,6 +92,19 @@ class UserServices {
     const tokens = tokenService.generateToken({ ...userDto });
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
     return { ...tokens, user: userDto };
+  }
+
+  async getRequestToChangePassword(email) {
+    const user = await User.findOne({ email: email });
+    if (!user) throw ApiError.UnautorizedError();
+    //if (user.isActivated == false)
+    //throw ApiError.BadRequest("Почта не активирована");
+    const userDto = new UserDto(user);
+    const reset_token = tokenService.generateResetToken({ ...userDto });
+    await tokenService.saveResetToken(userDto.id, reset_token);
+    const link = `${process.env.API_URL}/users//password-reset?token=${reset_token}&id=${user._id}`;
+    await mailService.sendResetPasswordMail(email, link);
+    return "Сообщение отправлено: " + link;
   }
 
   async getAll() {

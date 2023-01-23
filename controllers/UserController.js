@@ -76,6 +76,17 @@ class UserController {
     }
   }
 
+  async get_request_for_change_password(req, res) {
+    try {
+      const { email } = req.body;
+      const result = await UserService.getRequestToChangePassword(email);
+      return res.json(result);
+    } catch (e) {
+      console.log(e);
+      //next(e);
+    }
+  }
+
   async getAll(req, res) {
     try {
       const all = await UserService.getAll();
