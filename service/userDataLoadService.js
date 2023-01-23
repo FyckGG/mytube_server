@@ -23,8 +23,11 @@ class TokenService {
   async loadUserVideos(channel_id, user_id) {
     try {
       const user_videos_arr = [];
-      const videos = await Video.find({ user: channel_id });
-
+      const videos_result = await Video.find({ user: channel_id });
+      let videos = [];
+      if (channel_id != user_id)
+        videos = videos_result.filter((video) => video.is_public);
+      else videos = videos_result;
       for (let i = videos.length - 1; i >= 0; i--) {
         const thumbnails = await VideoThumbnail.findOne({
           video: videos[i]._id,
@@ -40,7 +43,7 @@ class TokenService {
           `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`,
           videos[i].upload_date
         );
-        console.log(userVideo);
+        //console.log(userVideo);
         if (user_id) {
           const is_watch_later = await WatchLaterVideo.findOne({
             video: videos[i]._id,
