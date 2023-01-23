@@ -40,6 +40,7 @@ class TokenService {
           `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`,
           videos[i].upload_date
         );
+        console.log(userVideo);
         if (user_id) {
           const is_watch_later = await WatchLaterVideo.findOne({
             video: videos[i]._id,
@@ -193,7 +194,7 @@ class TokenService {
     const user = await User.findById(user_id);
     if (!user) throw new Error("Пользователь не найден.");
     const description = await ChannelDesciption.findOne({ user: user_id });
-    if (!description) throw new Error("Описание канала не найдено.");
+    //if (!description) throw new Error("Описание канала не найдено.");
     return description;
   }
 }
