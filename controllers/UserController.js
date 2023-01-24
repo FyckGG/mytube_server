@@ -76,14 +76,25 @@ class UserController {
     }
   }
 
-  async get_request_for_change_password(req, res) {
+  async get_request_for_change_password(req, res, next) {
     try {
       const { email } = req.body;
       const result = await UserService.getRequestToChangePassword(email);
       return res.json(result);
     } catch (e) {
       console.log(e);
-      //next(e);
+      next(e);
+    }
+  }
+
+  async reset_password(req, res, next) {
+    try {
+      const { user_id, token, password } = req.body;
+      const result = await UserService.resetPassword(user_id, token, password);
+      return res.json(result);
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: e });
     }
   }
 

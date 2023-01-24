@@ -10,6 +10,7 @@ const ApiError = require("./../exceptions/apiError");
 const mailService = require("./mailService");
 
 const uuid = require("uuid");
+const ResetToken = require("../models/ResetToken.js");
 
 // const generateAccesToken = (id, em_log) => {
 //   const payload = { userId: id, em_log: em_log };
@@ -96,15 +97,36 @@ class UserServices {
 
   async getRequestToChangePassword(email) {
     const user = await User.findOne({ email: email });
-    if (!user) throw ApiError.UnautorizedError();
+    if (!user)
+      throw ApiError.BadRequest("Пользователь с данным email не найден");
     //if (user.isActivated == false)
     //throw ApiError.BadRequest("Почта не активирована");
     const userDto = new UserDto(user);
     const reset_token = tokenService.generateResetToken({ ...userDto });
-    await tokenService.saveResetToken(userDto.id, reset_token);
-    const link = `${process.env.API_URL}/users//password-reset?token=${reset_token}&id=${user._id}`;
+    const hash_token = bcrypt.hashSync(reset_token, 7);
+    //await tokenService.saveResetToken(userDto.id, reset_token);
+    await tokenService.saveResetToken(userDto.id, hash_token);
+    const link = `${process.env.CLIENT_URL}/password-reset?token=${reset_token}&id=${user._id}`;
     await mailService.sendResetPasswordMail(email, link);
     return "Сообщение отправлено: " + link;
+  }
+
+  async resetPassword(user_id, token, new_password) {
+    const passwordResetToken = await ResetToken.findOne({ user: user_id });
+    if (!passwordResetToken)
+      throw ApiError.BadRequest("Не удалось найти токен для изменения пароля");
+    const isValid = await bcrypt.compare(token, passwordResetToken.resetToken);
+    if (!isValid) throw new Error("Недействительный токен");
+    const is_token_valid = jwt.verify(token, process.env.JWT_RESET_SECRET);
+    console.log(is_token_valid);
+    const hash_password = bcrypt.hashSync(new_password, 7);
+    const user = await User.findById(user_id);
+    if (!user) throw ApiError.BadRequest("Пользователь не найден");
+    user.password = hash_password;
+    user.save();
+    await mailService.sendMessageSuccessPasswordReset(user.email);
+    await ResetToken.deleteOne({ user: user_id });
+    return "Пароль успешно изменён";
   }
 
   async getAll() {
