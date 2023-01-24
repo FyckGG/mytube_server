@@ -38,6 +38,18 @@ class MailService {
       </div>`,
     });
   }
+
+  async sendMessageSuccessPasswordReset(to) {
+    await this.transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to,
+      subject: `Succes implementation of password on ${process.env.API_URL}`,
+      text: "",
+      html: `<div>
+      <h1>Пароль был успешно изменен</h1>
+      </div>`,
+    });
+  }
 }
 
 module.exports = new MailService();
