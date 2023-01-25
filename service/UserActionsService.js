@@ -8,6 +8,7 @@ const Subscription = require("./../models/Subscription");
 const VideoComment = require("./../models/VideoComment");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const WatchLaterVideo = require("./../models/WatchLaterVideo");
+import VideoTags from "../models/VideoTags";
 const thumbsupply = require("thumbsupply");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
@@ -278,7 +279,8 @@ class UserActionService {
     await Video.deleteOne({ _id: video_id });
     await VideoThumbnail.deleteOne({ video: video_id });
     //////////////
-
+    await VideoTags.deleteOne({ video: video_id });
+    ///
     const video_stats = await VideoStatistics.findOne({ video: video_id });
     await VideoStatistics.deleteOne({ video: video_id });
 
