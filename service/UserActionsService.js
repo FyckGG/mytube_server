@@ -8,7 +8,7 @@ const Subscription = require("./../models/Subscription");
 const VideoComment = require("./../models/VideoComment");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const WatchLaterVideo = require("./../models/WatchLaterVideo");
-import VideoTags from "../models/VideoTags";
+const VideoTags = require("./../models/VideoTags");
 const thumbsupply = require("thumbsupply");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
@@ -258,6 +258,21 @@ class UserActionService {
     video.is_public = video_access;
 
     return video.save();
+  }
+
+  async editTags(user_id, video_id, tags, hash_tags) {
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Пользователь не найден");
+    const video = await Video.findById(video_id);
+    if (video.user != user_id) {
+      throw new Error(
+        "Пользователь не имеет права редактировать теги этого видео"
+      );
+    }
+    const video_tags = await VideoTags.findOne({ video: video_id });
+    video_tags.tags_list = tags;
+    video_tags.hash_tags_list = hash_tags;
+    return video_tags.save();
   }
 
   async deleteVideo(video_id) {

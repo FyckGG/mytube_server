@@ -47,6 +47,7 @@ router.post(
 );
 
 router.post("/edit-video", authenticateToken, UserActionController.edit_video);
+router.post("/edit-tags", authenticateToken, UserActionController.edit_tags);
 
 router.post(
   "/delete-video",

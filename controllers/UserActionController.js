@@ -155,6 +155,21 @@ class UserActionController {
     }
   }
 
+  async edit_tags(req, res) {
+    try {
+      const { user_id, video_id, tags, hash_tags } = req.body;
+      const result = await UserActionService.editTags(
+        user_id,
+        video_id,
+        tags,
+        hash_tags
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
+
   async delete_video(req, res) {
     try {
       const { video_id } = req.body;
