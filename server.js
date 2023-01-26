@@ -11,6 +11,7 @@ const vidoe_stats_router = require("./router/VideoStatsRouter");
 const data_load_router = require("./router/DataLoadRouter");
 const video_data_creation_router = require("./router/VideoDataCreationRouter");
 const video_data_load_router = require("./router/VideoDataLoaderRouter");
+const search_router = require("./router/searchRouter");
 const cookieParser = require("cookie-parser");
 const path = require("path");
 
@@ -46,6 +47,7 @@ app.use("/data-load", data_load_router);
 app.use("/video-data-creation", video_data_creation_router);
 app.use("/video-data-load", video_data_load_router);
 app.use("/user-data-change", user_data_change_router);
+app.use("/search", search_router);
 
 const start = async () => {
   try {
