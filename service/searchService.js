@@ -13,16 +13,13 @@ class searchService {
     const videos = await Video.find();
     const channels = await Users.find();
     const tags = await VideoTags.find();
-
     if (search_string[0] === "#") {
-      /// если ищем по хештегу то тупо видосы выдаем
-
       const filter_videos_by_hashtag = VideoFilterService.filterByHash(
         videos,
         tags,
         search_string
       );
-      return { videos: filter_videos_by_hashtag };
+      return { videos: filter_videos_by_hashtag, channels: [] };
     } //////////////////////////////////////////////////////////////////////////////
 
     const filter_videos_by_search_string = VideoFilterService.filterByName(
