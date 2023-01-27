@@ -5,9 +5,11 @@ const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
 const VideoThumbnail = require("./../models/VideoThumbnail");
 const PageComment = require("./../CommentClasses/PageComment");
-const PageVideo = require("./../VideoClasses/PageVideo");
+
 const getPageVIdeo = require("./../otherServices/getPageVideo");
+const getPageChannels = require("./../otherServices/getPageChannels");
 const WatchLaterVideo = require("../models/WatchLaterVideo");
+const searchService = require("./searchService");
 
 class DataLoadService {
   async loadComments(video_id, comment_count) {
@@ -69,6 +71,27 @@ class DataLoadService {
         page_videos.push({ ...video_for_page, is_watch_later: false });
     }
     return page_videos;
+  }
+
+  async loadFilteredContent(user_id, search_string) {
+    const filter_content = await searchService.getSearchResults(search_string);
+    const page_videos = [];
+    for (let video of filter_content.videos) {
+      const video_for_page = await getPageVIdeo(video);
+      const is_watch_later = await WatchLaterVideo.findOne({
+        video: video._id,
+        user: user_id,
+      });
+      if (!user_id)
+        page_videos.push({ ...video_for_page, is_watch_later: null });
+      if (user_id && is_watch_later !== null)
+        page_videos.push({ ...video_for_page, is_watch_later: true });
+      if (user_id && is_watch_later === null)
+        page_videos.push({ ...video_for_page, is_watch_later: false });
+    }
+    const page_channels = await getPageChannels(filter_content.channels);
+    if (page_channels.length > 5) page_channels.slice(0, 5);
+    return { videos: page_videos, channels: page_channels };
   }
 }
 
