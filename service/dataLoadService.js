@@ -3,7 +3,6 @@ const VideoComment = require("./../models/VideoComment");
 const Video = require("./../models/Video");
 const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
-const VideoThumbnail = require("./../models/VideoThumbnail");
 const PageComment = require("./../CommentClasses/PageComment");
 
 const getPageVIdeo = require("./../otherServices/getPageVideo");
@@ -75,19 +74,19 @@ class DataLoadService {
 
   async loadFilteredContent(user_id, search_string, current_page) {
     const filter_content = await searchService.getSearchResults(search_string);
-
-    const filter_content_length = filter_content.videos.length;
+    const public_filter_content = filter_content.videos.filter(
+      (video) => video.is_public
+    );
+    console.log(public_filter_content);
+    const filter_content_length = public_filter_content.length;
 
     const page_filter_content =
-      // filter_content.videos.length > 3
-      //   ? filter_content.videos.slice(current_page * 3, (current_page + 1) * 3)
-      //   : filter_content.videos;
-      filter_content.videos.length > 32
-        ? filter_content.videos.slice(
+      public_filter_content.length > 32
+        ? public_filter_content.slice(
             current_page * 32,
             (current_page + 1) * 32
           )
-        : filter_content.videos;
+        : public_filter_content;
     const page_videos = [];
 
     for (let video of page_filter_content) {
