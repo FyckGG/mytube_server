@@ -73,10 +73,24 @@ class DataLoadService {
     return page_videos;
   }
 
-  async loadFilteredContent(user_id, search_string) {
+  async loadFilteredContent(user_id, search_string, current_page) {
     const filter_content = await searchService.getSearchResults(search_string);
+
+    const filter_content_length = filter_content.videos.length;
+
+    const page_filter_content =
+      // filter_content.videos.length > 3
+      //   ? filter_content.videos.slice(current_page * 3, (current_page + 1) * 3)
+      //   : filter_content.videos;
+      filter_content.videos.length > 32
+        ? filter_content.videos.slice(
+            current_page * 32,
+            (current_page + 1) * 32
+          )
+        : filter_content.videos;
     const page_videos = [];
-    for (let video of filter_content.videos) {
+
+    for (let video of page_filter_content) {
       const video_for_page = await getPageVIdeo(video);
       const is_watch_later = await WatchLaterVideo.findOne({
         video: video._id,
@@ -91,7 +105,11 @@ class DataLoadService {
     }
     const page_channels = await getPageChannels(filter_content.channels);
     if (page_channels.length > 5) page_channels.slice(0, 5);
-    return { videos: page_videos, channels: page_channels };
+    return {
+      videos: page_videos,
+      channels: page_channels,
+      videos_length: filter_content_length,
+    };
   }
 }
 

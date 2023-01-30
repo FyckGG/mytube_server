@@ -28,10 +28,11 @@ class DataLoadController {
 
   async load_filtered_content(req, res) {
     try {
-      const { user_id, search_string } = req.body;
+      const { user_id, search_string, current_page } = req.body;
       const result = await DataLoadService.loadFilteredContent(
         user_id,
-        search_string
+        search_string,
+        current_page
       );
       res.json(result);
     } catch (e) {
