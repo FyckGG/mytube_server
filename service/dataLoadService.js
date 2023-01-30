@@ -3,6 +3,7 @@ const VideoComment = require("./../models/VideoComment");
 const Video = require("./../models/Video");
 const User = require("./../models/User");
 const UserAvatar = require("./../models/UserAvatar");
+const Subscribtions = require("./../models/Subscription");
 const PageComment = require("./../CommentClasses/PageComment");
 
 const getPageVIdeo = require("./../otherServices/getPageVideo");
@@ -77,7 +78,7 @@ class DataLoadService {
     const public_filter_content = filter_content.videos.filter(
       (video) => video.is_public
     );
-    console.log(public_filter_content);
+
     const filter_content_length = public_filter_content.length;
 
     const page_filter_content =
@@ -109,6 +110,51 @@ class DataLoadService {
       channels: page_channels,
       videos_length: filter_content_length,
     };
+  }
+
+  async loadSubscriptionsVideos(user_id, current_page) {
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Несуществующий пользователь");
+    const subs_channels = await Subscribtions.find({ subscriber: user_id });
+    const subs_videos = [];
+
+    for (let subs_channel of subs_channels) {
+      const channel_videos = await Video.find({ user: subs_channel.channel });
+
+      subs_videos.push(...channel_videos);
+    }
+
+    const cut_channels_videos =
+      subs_videos.length > 32
+        ? subs_videos.slice(current_page, (current_page + 1) * 32)
+        : subs_videos;
+    const videos_length = subs_videos.length;
+    const page_videos = [];
+    for (let video of cut_channels_videos) {
+      const video_for_page = await getPageVIdeo(video);
+      const is_watch_later = await WatchLaterVideo.findOne({
+        video: video._id,
+        user: user_id,
+      });
+      if (!user_id)
+        page_videos.push({ ...video_for_page, is_watch_later: null });
+      if (user_id && is_watch_later !== null)
+        page_videos.push({ ...video_for_page, is_watch_later: true });
+      if (user_id && is_watch_later === null)
+        page_videos.push({ ...video_for_page, is_watch_later: false });
+      console.log(video_for_page.video_name);
+      console.log(Date.now() - Date.parse(video_for_page.video_date));
+    }
+
+    page_videos.sort(function (a, b) {
+      return (
+        Date.now() -
+        Date.parse(a.video_date) -
+        (Date.now() - Date.parse(b.video_date))
+      );
+    });
+
+    return { videos: page_videos, videos_length: videos_length };
   }
 }
 
