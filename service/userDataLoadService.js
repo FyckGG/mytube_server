@@ -11,6 +11,7 @@ const ChannelDesciption = require("./../models/ChannelDesciption");
 const UserVideo = require("./../VideoClasses/UserVideo");
 const getPageVIdeo = require("./../otherServices/getPageVideo");
 const SubsChannel = require("./../SubscriptionsClasses/SubsChannel");
+const UserHistory = require("./../models/UserHistory");
 
 class TokenService {
   async findAvatar(id) {
@@ -199,6 +200,29 @@ class TokenService {
     const description = await ChannelDesciption.findOne({ user: user_id });
     //if (!description) throw new Error("Описание канала не найдено.");
     return description;
+  }
+
+  async getUserHistoryVideos(user_id) {
+    const user = await User.findById(user_id);
+    if (!user) throw new Error("Пользователь не найден.");
+    const history = await UserHistory.findOne({ user: user_id });
+    if (history.length == 0) return history;
+
+    const page_videos = [];
+    for (let history_item of history.history_videos) {
+      const video = await Video.findById(history_item);
+      const page_video = await getPageVIdeo(video);
+      const is_watch_later = await WatchLaterVideo.findOne({
+        video: video._id,
+        user: user_id,
+      });
+      if (!user_id) page_videos.push({ ...page_video, is_watch_later: null });
+      if (user_id && is_watch_later !== null)
+        page_videos.push({ ...page_video, is_watch_later: true });
+      if (user_id && is_watch_later === null)
+        page_videos.push({ ...page_video, is_watch_later: false });
+    }
+    return page_videos;
   }
 }
 

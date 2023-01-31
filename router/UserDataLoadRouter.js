@@ -30,4 +30,8 @@ router.post(
   "/get-channel-description",
   UserDataLoadController.get_channel_description
 );
+router.post(
+  "/get-user-history-videos",
+  UserDataLoadController.get_user_history_videos
+);
 module.exports = router;
