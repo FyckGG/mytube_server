@@ -202,14 +202,23 @@ class TokenService {
     return description;
   }
 
-  async getUserHistoryVideos(user_id) {
+  async getUserHistoryVideos(user_id, current_page) {
     const user = await User.findById(user_id);
     if (!user) throw new Error("Пользователь не найден.");
     const history = await UserHistory.findOne({ user: user_id });
-    if (history.length == 0) return history;
+    if (history.history_videos.length == 0) return history;
+    const video_length = history.history_videos.length;
+
+    const cut_history =
+      history.history_videos.length > 32
+        ? history.history_videos.slice(
+            current_page * 32,
+            (current_page + 1) * 32
+          )
+        : history.history_videos;
 
     const page_videos = [];
-    for (let history_item of history.history_videos) {
+    for (let history_item of cut_history) {
       const video = await Video.findById(history_item);
       const page_video = await getPageVIdeo(video);
       const is_watch_later = await WatchLaterVideo.findOne({
@@ -222,7 +231,8 @@ class TokenService {
       if (user_id && is_watch_later === null)
         page_videos.push({ ...page_video, is_watch_later: false });
     }
-    return page_videos;
+
+    return { videos: page_videos, videos_length: video_length };
   }
 }
 

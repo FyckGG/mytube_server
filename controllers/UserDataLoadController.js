@@ -122,8 +122,12 @@ class UserDataLoadController {
 
   async get_user_history_videos(req, res) {
     try {
-      const { user_id } = req.body;
-      const result = await UserDataLoadService.getUserHistoryVideos(user_id);
+      const { user_id, current_page } = req.body;
+
+      const result = await UserDataLoadService.getUserHistoryVideos(
+        user_id,
+        current_page
+      );
       res.json(result);
     } catch (e) {
       res.status(400).json({ error: e });
