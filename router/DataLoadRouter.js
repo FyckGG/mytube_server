@@ -1,4 +1,5 @@
 const { Router } = require("express");
+
 const DataLoadController = require("./../controllers/DataLoadController");
 const authenticateToken = require("./../middleware/authenticateToken");
 
@@ -12,5 +13,6 @@ router.post(
   authenticateToken,
   DataLoadController.load_subscriptions_videos
 );
+router.post("/get-videos-by-subject", DataLoadController.get_subject_videos);
 
 module.exports = router;

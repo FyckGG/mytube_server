@@ -121,12 +121,24 @@ class DataLoadService {
     for (let subs_channel of subs_channels) {
       const channel_videos = await Video.find({ user: subs_channel.channel });
 
-      subs_videos.push(...channel_videos);
+      const public_channel_videos = channel_videos.filter(
+        (video) => video.is_public
+      );
+
+      subs_videos.push(...public_channel_videos);
     }
+
+    subs_videos.sort(function (a, b) {
+      return (
+        Date.now() -
+        Date.parse(a.upload_date) -
+        (Date.now() - Date.parse(b.upload_date))
+      );
+    });
 
     const cut_channels_videos =
       subs_videos.length > 32
-        ? subs_videos.slice(current_page, (current_page + 1) * 32)
+        ? subs_videos.slice(current_page * 32, (current_page + 1) * 32)
         : subs_videos;
     const videos_length = subs_videos.length;
     const page_videos = [];
@@ -142,19 +154,51 @@ class DataLoadService {
         page_videos.push({ ...video_for_page, is_watch_later: true });
       if (user_id && is_watch_later === null)
         page_videos.push({ ...video_for_page, is_watch_later: false });
-      console.log(video_for_page.video_name);
-      console.log(Date.now() - Date.parse(video_for_page.video_date));
     }
 
-    page_videos.sort(function (a, b) {
+    return { videos: page_videos, videos_length: videos_length };
+  }
+
+  async loadVideosBySubject(user_id, subject, current_page) {
+    const subject_videos = await Video.find({ video_subject: subject });
+
+    const public_subject_videos = subject_videos.filter(
+      (video) => video.is_public
+    );
+    public_subject_videos.sort(function (a, b) {
       return (
         Date.now() -
-        Date.parse(a.video_date) -
-        (Date.now() - Date.parse(b.video_date))
+        Date.parse(a.upload_date) -
+        (Date.now() - Date.parse(b.upload_date))
       );
     });
+    const subject_videos_length = public_subject_videos.length;
+    const cut_subject_videos =
+      public_subject_videos.length > 32
+        ? public_subject_videos.slice(
+            current_page * 32,
+            (current_page + 1) * 32
+          )
+        : public_subject_videos;
 
-    return { videos: page_videos, videos_length: videos_length };
+    const page_videos = [];
+
+    for (let video of cut_subject_videos) {
+      const video_for_page = await getPageVIdeo(video);
+
+      const is_watch_later = await WatchLaterVideo.findOne({
+        video: video._id,
+        user: user_id,
+      });
+      if (!user_id)
+        page_videos.push({ ...video_for_page, is_watch_later: null });
+      if (user_id && is_watch_later !== null)
+        page_videos.push({ ...video_for_page, is_watch_later: true });
+      if (user_id && is_watch_later === null)
+        page_videos.push({ ...video_for_page, is_watch_later: false });
+    }
+
+    return { videos: page_videos, videos_length: subject_videos_length };
   }
 }
 

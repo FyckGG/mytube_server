@@ -52,6 +52,20 @@ class DataLoadController {
       res.status(400).send({ error: e });
     }
   }
+
+  async get_subject_videos(req, res) {
+    try {
+      const { user_id, subject, current_page } = req.body;
+      const result = await DataLoadService.loadVideosBySubject(
+        user_id,
+        subject,
+        current_page
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e });
+    }
+  }
 }
 
 module.exports = new DataLoadController();
