@@ -18,4 +18,9 @@ router.post(
   UserDataChangeController.change_description
 );
 
+router.post(
+  "/add-video-to-history",
+  UserDataChangeController.add_video_to_history
+);
+
 module.exports = router;
