@@ -58,7 +58,11 @@ class DataLoadService {
   async loadVideos(user) {
     const page_videos = [];
     const videos = await Video.find();
-    for (let video of videos) {
+    videos.reverse();
+    const public_videos = videos.filter((video) => video.is_public);
+    const cut_videos =
+      public_videos.length > 32 ? public_videos.slice(0, 32) : public_videos;
+    for (let video of cut_videos) {
       const video_for_page = await getPageVIdeo(video);
       const is_watch_later = await WatchLaterVideo.findOne({
         video: video._id,

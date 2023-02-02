@@ -220,16 +220,18 @@ class TokenService {
     const page_videos = [];
     for (let history_item of cut_history) {
       const video = await Video.findById(history_item);
-      const page_video = await getPageVIdeo(video);
-      const is_watch_later = await WatchLaterVideo.findOne({
-        video: video._id,
-        user: user_id,
-      });
-      if (!user_id) page_videos.push({ ...page_video, is_watch_later: null });
-      if (user_id && is_watch_later !== null)
-        page_videos.push({ ...page_video, is_watch_later: true });
-      if (user_id && is_watch_later === null)
-        page_videos.push({ ...page_video, is_watch_later: false });
+      if (video) {
+        const page_video = await getPageVIdeo(video);
+        const is_watch_later = await WatchLaterVideo.findOne({
+          video: video._id,
+          user: user_id,
+        });
+        if (!user_id) page_videos.push({ ...page_video, is_watch_later: null });
+        if (user_id && is_watch_later !== null)
+          page_videos.push({ ...page_video, is_watch_later: true });
+        if (user_id && is_watch_later === null)
+          page_videos.push({ ...page_video, is_watch_later: false });
+      }
     }
 
     return { videos: page_videos, videos_length: video_length };
