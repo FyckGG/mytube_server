@@ -26,6 +26,16 @@ class DataLoadController {
     }
   }
 
+  async load_new_videos(req, res) {
+    try {
+      const { user_id, current_page } = req.body;
+      const result = await DataLoadService.loadNewVideos(user_id, current_page);
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e });
+    }
+  }
+
   async load_filtered_content(req, res) {
     try {
       const { user_id, search_string, current_page } = req.body;

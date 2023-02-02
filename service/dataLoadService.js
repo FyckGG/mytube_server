@@ -77,6 +77,32 @@ class DataLoadService {
     return page_videos;
   }
 
+  async loadNewVideos(user, current_page) {
+    const videos = await Video.find();
+
+    videos.reverse();
+    const public_videos = videos.filter((video) => video.is_public);
+    const videos_length = public_videos.length;
+    const cut_videos =
+      public_videos.length > 32
+        ? public_videos.slice(current_page * 32, (current_page + 1) * 32)
+        : public_videos;
+    const page_videos = [];
+    for (let video of cut_videos) {
+      const video_for_page = await getPageVIdeo(video);
+      const is_watch_later = await WatchLaterVideo.findOne({
+        video: video._id,
+        user: user,
+      });
+      if (!user) page_videos.push({ ...video_for_page, is_watch_later: null });
+      if (user && is_watch_later !== null)
+        page_videos.push({ ...video_for_page, is_watch_later: true });
+      if (user && is_watch_later === null)
+        page_videos.push({ ...video_for_page, is_watch_later: false });
+    }
+    return { videos: page_videos, videos_length: videos_length };
+  }
+
   async loadFilteredContent(user_id, search_string, current_page) {
     const filter_content = await searchService.getSearchResults(search_string);
     const public_filter_content = filter_content.videos.filter(

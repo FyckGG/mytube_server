@@ -7,6 +7,7 @@ const router = new Router();
 
 router.post("/get-comments", DataLoadController.loadComments);
 router.post("/get-videos", DataLoadController.load_videos);
+router.post("/get-new-videos", DataLoadController.load_new_videos);
 router.post("/get-filtered-content", DataLoadController.load_filtered_content);
 router.post(
   "/get-subscriptions-videos",
