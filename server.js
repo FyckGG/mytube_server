@@ -22,7 +22,7 @@ const url = process.env.DB_URL;
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: `${process.env.CLIENT_URL}`,
   credentials: true,
   optionSuccessStatus: 200,
 };
