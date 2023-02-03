@@ -207,7 +207,7 @@ class TokenService {
     if (!user) throw new Error("Пользователь не найден.");
     const history = await UserHistory.findOne({ user: user_id });
     if (history.history_videos.length == 0)
-      return { videos: history, videos_length: 0 };
+      return { videos: [], videos_length: 0 };
     const video_length = history.history_videos.length;
 
     const cut_history =
