@@ -3,5 +3,5 @@
 # dependencies
 /node_modules
 /usersData
-package-lock.json
-package.json
+# package-lock.json
+# package.json
