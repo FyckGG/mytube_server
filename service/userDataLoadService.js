@@ -205,9 +205,11 @@ class TokenService {
   async getUserHistoryVideos(user_id, current_page) {
     const user = await User.findById(user_id);
     if (!user) throw new Error("Пользователь не найден.");
+
     const history = await UserHistory.findOne({ user: user_id });
-    if (history.history_videos.length == 0)
-      return { videos: [], videos_length: 0 };
+
+    if (history == null) return { videos: [], videos_length: 0 };
+
     const video_length = history.history_videos.length;
 
     const cut_history =
