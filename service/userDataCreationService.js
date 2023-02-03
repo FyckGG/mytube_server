@@ -4,15 +4,15 @@ const UserAvatar = require("../models/UserAvatar");
 
 class UserDataCreationService {
   async createDir(id) {
-    fs.stat(__dirname + "/../usersData", function (err) {
-      if (err.code === "ENOENT") {
-        fs.mkdir(path.join(__dirnaem + "/../userData/" + id), (err) => {
-          if (err) {
-            throw new Error("Не удалось создать общую пользовательскую папку.");
-          }
-        });
-      }
-    });
+    // fs.stat(__dirname + "/../usersData", function (err) {
+    //   if (err.code === "ENOENT") {
+    //     fs.mkdir(path.join(__dirnaem + "/../usersData/" + id), (err) => {
+    //       if (err) {
+    //         throw new Error("Не удалось создать общую пользовательскую папку.");
+    //       }
+    //     });
+    //   }
+    // });
     fs.mkdir(path.join(__dirname + "/../usersData/" + id), (err) => {
       if (err) {
         throw new Error("Не удалось создать папку.");
