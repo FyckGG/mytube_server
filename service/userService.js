@@ -45,10 +45,10 @@ class UserServices {
     const channel_description = await ChannelDescription.create({
       user: user._id,
     });
-    await mailService.sendActivationMail(
-      email,
-      `${process.env.API_URL}/users/activate/${activationLink}`
-    );
+    // await mailService.sendActivationMail(
+    //   email,
+    //   `${process.env.API_URL}/users/activate/${activationLink}`
+    // );
     const userDto = new UserDto(user);
     const tokens = tokenService.generateToken({ ...userDto });
     await tokenService.saveToken(userDto.id, tokens.refreshToken);
