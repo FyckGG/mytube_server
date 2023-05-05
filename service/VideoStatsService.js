@@ -43,7 +43,6 @@ class VideoStatsService {
     if (!deleted_mark)
       throw new Error("Не удалось найти запись в базе данных.");
     const video_stats = await VideoStatistic.findOne({ video: video });
-    console.log(video_stats);
     if (is_like) video_stats.count_of_like--;
     else video_stats.count_of_dislike--;
     return video_stats.save();

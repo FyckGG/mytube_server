@@ -44,7 +44,6 @@ class TokenService {
           `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`,
           videos[i].upload_date
         );
-        //console.log(userVideo);
         if (user_id) {
           const is_watch_later = await WatchLaterVideo.findOne({
             video: videos[i]._id,

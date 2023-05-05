@@ -18,7 +18,6 @@ class DataLoadController {
   async load_videos(req, res) {
     try {
       const { user } = req.body;
-      console.log(user);
       const result = await DataLoadService.loadVideos(user);
       res.json(result);
     } catch (e) {
