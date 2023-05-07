@@ -1,4 +1,3 @@
-const User = require("../models/User.js");
 const userService = require("./../service/userService");
 
 const UserService = require("./../service/userService");
@@ -94,6 +93,17 @@ class UserController {
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: e });
+    }
+  }
+
+  async deleteUser(req, res) {
+    try {
+      const { refreshToken } = req.cookies;
+      const result = await UserService.deleteUser(refreshToken);
+      return res.json(result);
+    } catch (e) {
+      console.log(e);
+      res.status(400).json({ message: "Not autoriz" });
     }
   }
 

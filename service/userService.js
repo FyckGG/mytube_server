@@ -1,9 +1,14 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User.js");
+const UserAvatar = require("../models/UserAvatar.js");
 const UserStatistic = require("./../models/UserStatistic");
+const Video = require("../models/Video.js");
+const LikeDislikeVideo = require("../models/LikeDislikeVideo");
+const WatchLaterVideo = require("../models/WatchLaterVideo");
 const ChannelDescription = require("./../models/ChannelDesciption");
+const Subscription = require("../models/Subscription");
+const UserHistory = require("../models/UserHistory");
 const jwt = require("jsonwebtoken");
-const { secret } = require("./../config");
 const tokenService = require("./tokenService");
 const UserDto = require("../dtos/userDto.js");
 const ApiError = require("./../exceptions/apiError");
@@ -11,11 +16,10 @@ const mailService = require("./mailService");
 
 const uuid = require("uuid");
 const ResetToken = require("../models/ResetToken.js");
+const deleteVideoFromDB = require("../otherServices/deleteVideoFromDB");
+const VideoComment = require("../models/VideoComment.js");
 
-// const generateAccesToken = (id, em_log) => {
-//   const payload = { userId: id, em_log: em_log };
-//   return jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: "1h" });
-// };
+const fs = require("fs");
 
 class UserServices {
   async registration(email, login, password, img_profile) {
@@ -24,7 +28,6 @@ class UserServices {
 
     if (candidate_by_email) {
       throw ApiError.BadRequest(`Email ${email} уже привязан.`);
-      //return "Привязан";
     }
     if (candidate_by_login) {
       throw ApiError.BadRequest(`Login ${login} уже существует.`);
@@ -95,12 +98,9 @@ class UserServices {
     const user = await User.findOne({ email: email });
     if (!user)
       throw ApiError.BadRequest("Пользователь с данным email не найден");
-    //if (user.isActivated == false)
-    //throw ApiError.BadRequest("Почта не активирована");
     const userDto = new UserDto(user);
     const reset_token = tokenService.generateResetToken({ ...userDto });
     const hash_token = bcrypt.hashSync(reset_token, 7);
-    //await tokenService.saveResetToken(userDto.id, reset_token);
     await tokenService.saveResetToken(userDto.id, hash_token);
     const link = `${process.env.CLIENT_URL}/password-reset?token=${reset_token}&id=${user._id}`;
     await mailService.sendResetPasswordMail(email, link);
@@ -123,6 +123,40 @@ class UserServices {
     await mailService.sendMessageSuccessPasswordReset(user.email);
     await ResetToken.deleteOne({ user: user_id });
     return "Пароль успешно изменён";
+  }
+
+  async deleteUser(refreshToken) {
+    const token = await tokenService.findToken(refreshToken);
+    await tokenService.deleteToken(refreshToken);
+    const user = await User.findById(token.user);
+
+    await UserAvatar.deleteOne({ user: user._id });
+    await UserStatistic.deleteOne({ user: user._id });
+    const userVideos = await Video.find({ user: user._id });
+
+    await Promise.all(
+      userVideos.map(async (video) => {
+        await deleteVideoFromDB(video._id);
+      })
+    );
+    await Subscription.deleteMany({
+      $or: [{ channel: user._id }, { subscriber: user._id }],
+    });
+    await LikeDislikeVideo.deleteMany({ user: user._id });
+    await WatchLaterVideo.deleteMany({ user: user._id });
+    await VideoComment.deleteMany({ user: user._id });
+    await UserHistory.deleteOne({ user: user._id });
+    await ChannelDescription.deleteOne({ user: user._id });
+    fs.rmSync(
+      `${__dirname}/../usersData/${user._id}`,
+      { recursive: true, force: true },
+      (err) => {
+        if (err) throw err;
+        console.log("Пользовательская директория удалена");
+      }
+    );
+    await User.deleteOne({ _id: user._id });
+    return "Пользователь удалён.";
   }
 
   async getAll() {

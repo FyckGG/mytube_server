@@ -15,7 +15,8 @@ const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
 const WatchVideoInfo = require("./../VideoClasses/WatchVideoInfo");
 const PageComment = require("./../CommentClasses/PageComment");
-const fs = require("fs");
+//const fs = require("fs");
+const deleteVideoFromDB = require("../otherServices/deleteVideoFromDB");
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 class UserActionService {
@@ -276,41 +277,42 @@ class UserActionService {
   }
 
   async deleteVideo(video_id) {
-    const video = await Video.findById(video_id);
-    if (!video) throw new Error("Видео для удаления не найдено");
-    const video_preview = await VideoThumbnail.findOne({ video: video_id });
-    if (!video_preview) throw new Error("Не найдено превью видео для удаления");
-    fs.unlink(`${__dirname}/../${video.video_directory}`, (err) => {
-      if (err) throw err;
-      console.log("Файл успешно удалён");
-    });
-    fs.unlink(
-      `${__dirname}/../${video_preview.thumbnail_directory}/${video_preview.thumbnail_name}`,
-      (err) => {
-        if (err) throw err;
-        console.log("Файл успешно удалён");
-      }
-    );
-    await Video.deleteOne({ _id: video_id });
-    await VideoThumbnail.deleteOne({ video: video_id });
-    //////////////
-    await VideoTags.deleteOne({ video: video_id });
-    ///
-    const video_stats = await VideoStatistics.findOne({ video: video_id });
-    await VideoStatistics.deleteOne({ video: video_id });
+    const result = await deleteVideoFromDB(video_id);
+    // const video = await Video.findById(video_id);
+    // if (!video) throw new Error("Видео для удаления не найдено");
+    // const video_preview = await VideoThumbnail.findOne({ video: video_id });
+    // if (!video_preview) throw new Error("Не найдено превью видео для удаления");
+    // fs.unlink(`${__dirname}/../${video.video_directory}`, (err) => {
+    //   if (err) throw err;
+    //   console.log("Файл успешно удалён");
+    // });
+    // fs.unlink(
+    //   `${__dirname}/../${video_preview.thumbnail_directory}/${video_preview.thumbnail_name}`,
+    //   (err) => {
+    //     if (err) throw err;
+    //     console.log("Файл успешно удалён");
+    //   }
+    // );
+    // await Video.deleteOne({ _id: video_id });
+    // await VideoThumbnail.deleteOne({ video: video_id });
+    // //////////////
+    // await VideoTags.deleteOne({ video: video_id });
+    // ///
+    // const video_stats = await VideoStatistics.findOne({ video: video_id });
+    // await VideoStatistics.deleteOne({ video: video_id });
 
-    const comments = await VideoComment.find({ video_stat: video_stats._id });
+    // const comments = await VideoComment.find({ video_stat: video_stats._id });
 
-    if (comments)
-      await VideoComment.deleteMany({ video_stat: video_stats._id });
+    // if (comments)
+    //   await VideoComment.deleteMany({ video_stat: video_stats._id });
 
-    const marks = await LikeDislikeVideo.find({ video: video_id });
-    if (marks) await LikeDislikeVideo.deleteMany({ video: video_id });
+    // const marks = await LikeDislikeVideo.find({ video: video_id });
+    // if (marks) await LikeDislikeVideo.deleteMany({ video: video_id });
 
-    const watch_later = await WatchLaterVideo.find({ video: video_id });
-    if (watch_later) await WatchLaterVideo.deleteMany({ video: video_id });
+    // const watch_later = await WatchLaterVideo.find({ video: video_id });
+    // if (watch_later) await WatchLaterVideo.deleteMany({ video: video_id });
 
-    return "Видео удалено";
+    return result;
   }
 }
 
