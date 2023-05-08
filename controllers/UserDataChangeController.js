@@ -13,7 +13,7 @@ class UserDataChangeController {
         res.json({ avatar_change_result });
       } else throw new Error("Имя изображения не получено.");
     } catch (e) {
-      res.status.send({ error: e });
+      res.status(400).send({ error: e });
     }
   }
 
@@ -26,7 +26,7 @@ class UserDataChangeController {
       );
       res.json({ result });
     } catch (e) {
-      res.status.send({ error: e });
+      res.status(400).send({ error: e });
     }
   }
 
@@ -39,7 +39,7 @@ class UserDataChangeController {
       );
       res.json({ result });
     } catch (e) {
-      res.status.send({ error: e });
+      res.status(400).send({ error: e });
     }
   }
 }
