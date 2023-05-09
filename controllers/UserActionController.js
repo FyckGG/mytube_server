@@ -54,9 +54,10 @@ class UserActionController {
         video_id,
         user_id
       );
+      if (result instanceof Error) throw new Error(result);
       res.json(result);
     } catch (e) {
-      res.status(400).send({ error: e.message });
+      res.status(404).send({ error: e.message });
     }
   }
 

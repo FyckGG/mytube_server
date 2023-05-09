@@ -38,6 +38,9 @@ class UserDataLoadController {
     try {
       const { user_id } = req.body;
       const result = await UserDataLoadService.loadUser(user_id);
+
+      if (result instanceof Error) throw new Error(result);
+
       return res.json(result);
     } catch (e) {
       res.status(400).json({ error: e });

@@ -20,7 +20,7 @@ class searchService {
         search_string
       );
       return { videos: filter_videos_by_hashtag, channels: [] };
-    } //////////////////////////////////////////////////////////////////////////////
+    }
 
     const filter_videos_by_search_string = VideoFilterService.filterByName(
       videos,

@@ -36,12 +36,10 @@ class VideoStatsService {
   }
 
   async deleteMark(video, user, is_like) {
-    const deleted_mark = await LikeDislikeVideo.deleteOne({
+    await LikeDislikeVideo.deleteOne({
       video: video,
       user: user,
     });
-    if (!deleted_mark)
-      throw new Error("Не удалось найти запись в базе данных.");
     const video_stats = await VideoStatistic.findOne({ video: video });
     if (is_like) video_stats.count_of_like--;
     else video_stats.count_of_dislike--;

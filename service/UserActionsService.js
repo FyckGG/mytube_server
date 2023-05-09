@@ -15,7 +15,6 @@ const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
 const WatchVideoInfo = require("./../VideoClasses/WatchVideoInfo");
 const PageComment = require("./../CommentClasses/PageComment");
-//const fs = require("fs");
 const deleteVideoFromDB = require("../otherServices/deleteVideoFromDB");
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -52,10 +51,10 @@ class UserActionService {
     try {
       const thubnail = new ffmpeg(__dirname + video_dir)
         .on("filenames", function (filenames) {
-          console.log("Will generate " + filenames.join(", "));
+          console.log("Будет создано" + filenames.join(", "));
         })
         .on("end", function () {
-          console.log("Screenshots taken");
+          console.log("Скриншот сделан");
         })
         .takeScreenshots(
           {
@@ -66,7 +65,7 @@ class UserActionService {
           },
 
           function (err) {
-            console.log("screenshots were saved");
+            console.log("Скриншот сохранён");
           }
         );
       const thumbnail = await VideoThumbnail.create({
@@ -83,14 +82,27 @@ class UserActionService {
   async loadVideoForWatch(video_id, user_id) {
     try {
       const video = await Video.findOne({ _id: video_id });
+
+      if (!video) throw new Error("Видео для просмотра не найдено");
+
       const video_stat = await VideoStatistics.findOne({ video: video_id });
+      if (!video_stat) throw new Error("Статистика видео не найдена");
+
       const channel = await User.findOne({ _id: video.user });
+      if (!channel) throw new Error("Владелец видео не найден");
+
       const channel_avatar = await UserAvatar.findOne({ user: channel._id });
+      if (!channel_avatar) throw new Error("Аватар владельца видео не найден");
+
       const channel_stat = await UserStatistic.findOne({ user: channel._id });
+      if (!channel_stat)
+        throw new Error("Статистика владельца видео не найдена");
+
       const video_mark = await LikeDislikeVideo.findOne({
         video: video_id,
         user: user_id,
       });
+
       const is_like = video_mark ? video_mark.is_like : null;
 
       const video_info = new WatchVideoInfo(
@@ -105,13 +117,16 @@ class UserActionService {
 
       return { ...video_info, video: video };
     } catch (e) {
-      return "Ошибка при загруке видео: " + e;
+      return e;
     }
   }
 
   async sendComment(video_id, user_id, text) {
     try {
       const video_stat = await VideoStatistics.findOne({ video: video_id });
+
+      if (!video_stat) throw new Error("Статистика видео не найдена");
+
       const video_stat_id = video_stat._id;
       const comment = await VideoComment.create({
         video_stat: video_stat_id,
@@ -120,8 +135,15 @@ class UserActionService {
       });
       video_stat.count_of_comments++;
       video_stat.save();
+
       const user = await User.findById(user_id);
+
+      if (!user) throw new Error("Пользователь не найден");
+
       const user_avatar = await UserAvatar.findOne({ user: user_id });
+
+      if (!user_avatar) throw new Error("Аватар пользователя не найден");
+
       const page_comment = new PageComment(
         comment._id,
         user._id,
@@ -212,7 +234,6 @@ class UserActionService {
   async addToWatchLater(video_id, user_id) {
     const video = await Video.findById(video_id);
     const user = await User.findById(user_id);
-    if (!video) throw new Error("Пользователь не найден.");
     if (!user) throw new Error("Видео не найдено.");
     const watch_later_video = await WatchLaterVideo.findOne({
       video: video_id,
@@ -278,39 +299,6 @@ class UserActionService {
 
   async deleteVideo(video_id) {
     const result = await deleteVideoFromDB(video_id);
-    // const video = await Video.findById(video_id);
-    // if (!video) throw new Error("Видео для удаления не найдено");
-    // const video_preview = await VideoThumbnail.findOne({ video: video_id });
-    // if (!video_preview) throw new Error("Не найдено превью видео для удаления");
-    // fs.unlink(`${__dirname}/../${video.video_directory}`, (err) => {
-    //   if (err) throw err;
-    //   console.log("Файл успешно удалён");
-    // });
-    // fs.unlink(
-    //   `${__dirname}/../${video_preview.thumbnail_directory}/${video_preview.thumbnail_name}`,
-    //   (err) => {
-    //     if (err) throw err;
-    //     console.log("Файл успешно удалён");
-    //   }
-    // );
-    // await Video.deleteOne({ _id: video_id });
-    // await VideoThumbnail.deleteOne({ video: video_id });
-    // //////////////
-    // await VideoTags.deleteOne({ video: video_id });
-    // ///
-    // const video_stats = await VideoStatistics.findOne({ video: video_id });
-    // await VideoStatistics.deleteOne({ video: video_id });
-
-    // const comments = await VideoComment.find({ video_stat: video_stats._id });
-
-    // if (comments)
-    //   await VideoComment.deleteMany({ video_stat: video_stats._id });
-
-    // const marks = await LikeDislikeVideo.find({ video: video_id });
-    // if (marks) await LikeDislikeVideo.deleteMany({ video: video_id });
-
-    // const watch_later = await WatchLaterVideo.find({ video: video_id });
-    // if (watch_later) await WatchLaterVideo.deleteMany({ video: video_id });
 
     return result;
   }

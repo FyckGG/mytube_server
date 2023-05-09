@@ -39,8 +39,6 @@ class UserDataCreationController {
   async upload_avatar(req, res, next) {
     try {
       if (req.file) {
-        console.log(req.file);
-        console.log(req.body);
         res.json({ avatar_name: req.file.filename });
       } else {
         throw new Error("Имя изображения не получено.");

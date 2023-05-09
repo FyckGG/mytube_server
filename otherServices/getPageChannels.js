@@ -12,6 +12,9 @@ const getPageChannels = async (channels) => {
     const channel_stats = await UserStatistic.findOne({
       user: channel._id,
     });
+
+    if (!channel_avatar || !channel_stats) continue;
+
     const page_channel = new SubsChannel(
       channel._id,
       channel.login,

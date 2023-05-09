@@ -7,8 +7,6 @@ const Video = require("../models/Video");
 
 class UserDataChangeService {
   async changeAvatar(user_id, avatar_name) {
-    const user = await User.findById(user_id);
-    if (!user) throw new Error("Не удалось найти пользователя");
     const avatar = await UserAvatar.findOne({ user: user_id });
     fs.unlink(
       `${__dirname}/../${avatar.avatar_dir}${avatar.avatar_name}`,
@@ -23,7 +21,7 @@ class UserDataChangeService {
 
   async changeChannelDescription(user_id, text) {
     const user = await User.findById(user_id);
-    if (!user) throw new Error("Не удалось найти пользователя");
+    if (!user) throw new Error("Пользователь не найден");
     const channel_description = await ChannelDesciption.findOne({
       user: user_id,
     });

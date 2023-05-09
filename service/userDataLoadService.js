@@ -13,7 +13,7 @@ const getPageVIdeo = require("./../otherServices/getPageVideo");
 const SubsChannel = require("./../SubscriptionsClasses/SubsChannel");
 const UserHistory = require("./../models/UserHistory");
 
-class TokenService {
+class UserDataLoadService {
   async findAvatar(id) {
     const avatar = await UserAvatar.findOne({
       user: id,
@@ -30,18 +30,19 @@ class TokenService {
         videos = videos_result.filter((video) => video.is_public);
       else videos = videos_result;
       for (let i = videos.length - 1; i >= 0; i--) {
-        const thumbnails = await VideoThumbnail.findOne({
+        const thumbnail = await VideoThumbnail.findOne({
           video: videos[i]._id,
         });
-        const statistics = await VideoStatistic.findOne({
+        const statistic = await VideoStatistic.findOne({
           video: videos[i]._id,
         });
+        if (!thumbnail || !statistic) continue;
         const userVideo = new UserVideo(
           videos[i]._id,
           videos[i].video_name,
           videos[i].video_duration,
-          statistics.count_of_views,
-          `${thumbnails.thumbnail_directory}/${thumbnails.thumbnail_name}`,
+          statistic.count_of_views,
+          `${thumbnail.thumbnail_directory}/${thumbnail.thumbnail_name}`,
           videos[i].upload_date
         );
         if (user_id) {
@@ -52,15 +53,15 @@ class TokenService {
           if (is_watch_later == null)
             user_videos_arr.push({
               ...userVideo,
-              count_of_likes: statistics.count_of_like,
-              count_of_dislikes: statistics.count_of_dislike,
+              count_of_likes: statistic.count_of_like,
+              count_of_dislikes: statistic.count_of_dislike,
               is_watch_later: false,
             });
           if (is_watch_later != null)
             user_videos_arr.push({
               ...userVideo,
-              count_of_likes: statistics.count_of_like,
-              count_of_dislikes: statistics.count_of_dislike,
+              count_of_likes: statistic.count_of_like,
+              count_of_dislikes: statistic.count_of_dislike,
               is_watch_later: true,
             });
         } else user_videos_arr.push(userVideo);
@@ -86,10 +87,10 @@ class TokenService {
   async loadUser(user_id) {
     try {
       const user = await User.findById(user_id);
-      if (!user) throw new Error("Пользователь не найден!");
+      if (!user) throw new Error("Пользовател не найден");
       return user;
     } catch (e) {
-      console.log("Ошибка при загрузке данных пользователя: " + e);
+      return e;
     }
   }
 
@@ -108,7 +109,6 @@ class TokenService {
 
   async getChannelStatus(user_id, video_id) {
     const channel = await Video.findById(video_id);
-    if (!channel) throw new Error("Не удалось найти видео по id.");
     if (!user_id) return { channel: channel.user, subs_status: undefined };
     const subs_info = await Subscription.findOne({
       channel: channel.user,
@@ -120,7 +120,6 @@ class TokenService {
 
   async getVideoMark(user_id, video_id) {
     const user = await User.findById(user_id);
-    if (!user && user_id) throw new Error("Не удалось найти пользователя.");
     const video = await Video.findById(video_id);
     if (!video) throw new Error("Не удалось найти видео.");
     const video_mark = await LikeDislikeVideo.findOne({
@@ -133,7 +132,7 @@ class TokenService {
   async getLikedVideos(user_id) {
     const page_videos = [];
     const user = await User.findById(user_id);
-    if (!user) throw new Error("Несуществующий пользователь.");
+    if (!user) throw new Error("Пользователь не найден.");
     const videos_likes = await LikeDislikeVideo.find({
       user: user_id,
       is_like: true,
@@ -197,7 +196,6 @@ class TokenService {
     const user = await User.findById(user_id);
     if (!user) throw new Error("Пользователь не найден.");
     const description = await ChannelDesciption.findOne({ user: user_id });
-    //if (!description) throw new Error("Описание канала не найдено.");
     return description;
   }
 
@@ -240,4 +238,4 @@ class TokenService {
   }
 }
 
-module.exports = new TokenService();
+module.exports = new UserDataLoadService();

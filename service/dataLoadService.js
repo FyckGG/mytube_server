@@ -18,8 +18,7 @@ class DataLoadService {
     const commentList = await VideoComment.find({
       video_stat: video_stats._id,
     });
-    if (!commentList)
-      throw new Error("Не удалось найти комментарии для данного видео.");
+    if (!commentList) return;
     const page_comment_list = [];
 
     commentList.reverse(commentList);
@@ -40,15 +39,19 @@ class DataLoadService {
         throw new Error(
           "Не удалось найти аватар пользователя, оставившего комментарий."
         );
-      const page_comment = new PageComment(
-        newCommentList[i]._id,
-        newCommentList[i].user,
-        user.login,
-        `${user_avatar.avatar_dir}${user_avatar.avatar_name}`,
-        newCommentList[i].comment_text,
-        newCommentList[i].comment_date
-      );
-      page_comment_list.push(page_comment);
+      if (user && user_avatar) {
+        const page_comment = new PageComment(
+          newCommentList[i]._id,
+          newCommentList[i].user,
+          user.login,
+          `${user_avatar.avatar_dir}${user_avatar.avatar_name}`,
+          newCommentList[i].comment_text,
+          newCommentList[i].comment_date
+        );
+        page_comment_list.push(page_comment);
+      } else {
+        video_stats.count_of_comments--;
+      }
     }
 
     const comments_count = video_stats.count_of_comments;
@@ -64,6 +67,9 @@ class DataLoadService {
       public_videos.length > 32 ? public_videos.slice(0, 32) : public_videos;
     for (let video of cut_videos) {
       const video_for_page = await getPageVIdeo(video);
+
+      if (video_for_page instanceof Error) continue;
+
       const is_watch_later = await WatchLaterVideo.findOne({
         video: video._id,
         user: user,
@@ -90,6 +96,7 @@ class DataLoadService {
     const page_videos = [];
     for (let video of cut_videos) {
       const video_for_page = await getPageVIdeo(video);
+      if (video_for_page instanceof Error) continue;
       const is_watch_later = await WatchLaterVideo.findOne({
         video: video._id,
         user: user,
@@ -122,6 +129,7 @@ class DataLoadService {
 
     for (let video of page_filter_content) {
       const video_for_page = await getPageVIdeo(video);
+      if (video_for_page instanceof Error) continue;
       const is_watch_later = await WatchLaterVideo.findOne({
         video: video._id,
         user: user_id,
@@ -144,7 +152,6 @@ class DataLoadService {
 
   async loadSubscriptionsVideos(user_id, current_page) {
     const user = await User.findById(user_id);
-    if (!user) throw new Error("Несуществующий пользователь");
     const subs_channels = await Subscribtions.find({ subscriber: user_id });
     const subs_videos = [];
 
@@ -215,6 +222,8 @@ class DataLoadService {
 
     for (let video of cut_subject_videos) {
       const video_for_page = await getPageVIdeo(video);
+
+      if (video_for_page instanceof Error) continue;
 
       const is_watch_later = await WatchLaterVideo.findOne({
         video: video._id,
