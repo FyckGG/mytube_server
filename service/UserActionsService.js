@@ -9,7 +9,7 @@ const VideoComment = require("./../models/VideoComment");
 const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const WatchLaterVideo = require("./../models/WatchLaterVideo");
 const VideoTags = require("./../models/VideoTags");
-const thumbsupply = require("thumbsupply");
+const UserComplaint = require("./../models/UserComplaint");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
@@ -301,6 +301,16 @@ class UserActionService {
     const result = await deleteVideoFromDB(video_id);
 
     return result;
+  }
+
+  async sendComplaint(complaint_source, complaint_target, complaint_text) {
+    const complaint = await UserComplaint.create({
+      complaint_source: complaint_source,
+      complaint_target: complaint_target,
+      complaint_text: complaint_text,
+    });
+
+    return complaint;
   }
 }
 

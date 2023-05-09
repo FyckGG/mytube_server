@@ -55,4 +55,10 @@ router.post(
   UserActionController.delete_video
 );
 
+router.post(
+  "/send-complaint",
+  authenticateToken,
+  UserActionController.send_complaint
+);
+
 module.exports = router;
