@@ -61,4 +61,10 @@ router.post(
   UserActionController.send_complaint
 );
 
+router.post(
+  "/send-video-complaint",
+  authenticateToken,
+  UserActionController.send_video_complaint
+);
+
 module.exports = router;

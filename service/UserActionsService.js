@@ -10,6 +10,7 @@ const LikeDislikeVideo = require("./../models/LikeDislikeVideo");
 const WatchLaterVideo = require("./../models/WatchLaterVideo");
 const VideoTags = require("./../models/VideoTags");
 const UserComplaint = require("./../models/UserComplaint");
+const VideoComplaint = require("./../models/VideoComplaint");
 const ffmpegPath = require("@ffmpeg-installer/ffmpeg").path;
 const ffprobePath = require("@ffprobe-installer/ffprobe").path;
 const ffmpeg = require("fluent-ffmpeg");
@@ -310,6 +311,15 @@ class UserActionService {
       complaint_text: complaint_text,
     });
 
+    return complaint;
+  }
+
+  async sendVideoComplaint(complaint_source, complaint_target, complaint_text) {
+    const complaint = await VideoComplaint.create({
+      complaint_source: complaint_source,
+      complaint_target: complaint_target,
+      complaint_text: complaint_text,
+    });
     return complaint;
   }
 }

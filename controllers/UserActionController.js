@@ -194,6 +194,20 @@ class UserActionController {
       res.status(400).send({ error: e.message });
     }
   }
+
+  async send_video_complaint(req, res) {
+    try {
+      const { complaint_source, complaint_target, complaint_text } = req.body;
+      const result = await UserActionService.sendVideoComplaint(
+        complaint_source,
+        complaint_target,
+        complaint_text
+      );
+      res.json(result);
+    } catch (e) {
+      res.status(400).send({ error: e.message });
+    }
+  }
 }
 
 module.exports = new UserActionController();
