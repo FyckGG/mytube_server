@@ -23,9 +23,9 @@ class VideoFilterService {
     for (let i = 0; i < tags.length; i++) {
       for (let j = 0; j < tags[i].tags_list.length; j++) {
         if (
-          natural.PorterStemmer.stem(
+          natural.PorterStemmerRu.stem(
             JSON.stringify(tags[i].tags_list[j])
-          ).includes(natural.PorterStemmer.stem(search_tag)) ||
+          ).includes(natural.PorterStemmerRu.stem(search_tag)) ||
           tags[i].tags_list[j] === search_tag
         ) {
           filter_videos_by_tag.push(
@@ -41,8 +41,8 @@ class VideoFilterService {
 
   filterByName(videos, search_string) {
     const filter_videos_by_name = videos.filter((video) =>
-      natural.PorterStemmer.stem(JSON.stringify(video.video_name)).includes(
-        natural.PorterStemmer.stem(search_string)
+      natural.PorterStemmerRu.stem(JSON.stringify(video.video_name)).includes(
+        natural.PorterStemmerRu.stem(search_string)
       )
     );
     filter_videos_by_name.reverse();
